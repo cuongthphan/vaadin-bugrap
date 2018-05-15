@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;GENERATE_GETTERS&quot;:false,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
+  <meta name="vaadin-version" content="8.1.5">
+ </head>
+ <body>
+  <vaadin-css-layout width="1440px" height-full>
+   <vaadin-vertical-layout size-auto margin="false">
+    <vaadin-horizontal-layout>
+     <vaadin-combo-box data-item-type="java.lang.String">
+      <option item="Option1">Option 1</option>
+      <option item="Option2">Option 2</option>
+      <option item="Option3">Option 3</option>
+     </vaadin-combo-box>
+     <vaadin-horizontal-layout>
+      <vaadin-horizontal-layout height="30px">
+       <vaadin-image width="30px" _id="profileIcon"></vaadin-image>
+       <vaadin-label plain-text _id="profileNameLabel">
+         Cuong Phan 
+       </vaadin-label>
+      </vaadin-horizontal-layout>
+      <vaadin-horizontal-layout height="30px">
+       <vaadin-image width="30px" _id="logoutIcon"></vaadin-image>
+       <vaadin-label plain-text _id="logoutLabel">
+         Logout 
+       </vaadin-label>
+      </vaadin-horizontal-layout>
+     </vaadin-horizontal-layout>
+    </vaadin-horizontal-layout>
+    <vaadin-horizontal-layout>
+     <vaadin-horizontal-layout>
+      <vaadin-image width="30px" _id="bugIcon"></vaadin-image>
+      <vaadin-label plain-text _id="bugLabel">
+        Report a bug 
+      </vaadin-label>
+     </vaadin-horizontal-layout>
+     <vaadin-horizontal-layout height="30px">
+      <vaadin-image width="30px" _id="requestIcon"></vaadin-image>
+      <vaadin-label plain-text _id="requestLabel">
+        Request a feature 
+      </vaadin-label>
+     </vaadin-horizontal-layout>
+     <vaadin-horizontal-layout height="30px">
+      <vaadin-image width="30px" _id="manageIcon"></vaadin-image>
+      <vaadin-label plain-text _id="manageLabel">
+        Manage project 
+      </vaadin-label>
+      <vaadin-label plain-text _id="projectCountLable">
+        123 
+      </vaadin-label>
+     </vaadin-horizontal-layout>
+     <vaadin-text-field value="Search reports..." _id="searchBar"></vaadin-text-field>
+    </vaadin-horizontal-layout>
+   </vaadin-vertical-layout>
+  </vaadin-css-layout>
+ </body>
+</html>
