@@ -6,54 +6,118 @@
   <meta name="vaadin-version" content="8.1.5">
  </head>
  <body>
-  <vaadin-css-layout width="1440px" height-full>
-   <vaadin-vertical-layout size-auto margin="false">
-    <vaadin-horizontal-layout>
-     <vaadin-combo-box data-item-type="java.lang.String">
+  <vaadin-vertical-layout>
+   <vaadin-vertical-layout>
+    <vaadin-horizontal-layout width-full>
+     <vaadin-combo-box width-full data-item-type="java.lang.String">
       <option item="Option1">Option 1</option>
       <option item="Option2">Option 2</option>
       <option item="Option3">Option 3</option>
      </vaadin-combo-box>
-     <vaadin-horizontal-layout>
-      <vaadin-horizontal-layout height="30px">
-       <vaadin-image width="30px" _id="profileIcon"></vaadin-image>
-       <vaadin-label plain-text _id="profileNameLabel">
-         Cuong Phan 
-       </vaadin-label>
+     <vaadin-horizontal-layout size-full :right>
+      <vaadin-horizontal-layout height-full :middle :right>
+       <vaadin-css-layout :middle :right>
+        <vaadin-label icon="fonticon://Vaadin-Icons/e80d" plain-text _id="userName">
+          Cuong Phan 
+        </vaadin-label>
+       </vaadin-css-layout>
+       <vaadin-css-layout :middle :right>
+        <vaadin-label icon="fonticon://Vaadin-Icons/e6ac" plain-text _id="logoutLabel">
+          Logout 
+        </vaadin-label>
+       </vaadin-css-layout>
       </vaadin-horizontal-layout>
-      <vaadin-horizontal-layout height="30px">
-       <vaadin-image width="30px" _id="logoutIcon"></vaadin-image>
-       <vaadin-label plain-text _id="logoutLabel">
-         Logout 
+     </vaadin-horizontal-layout>
+    </vaadin-horizontal-layout>
+    <vaadin-horizontal-layout width-full>
+     <vaadin-horizontal-layout :middle>
+      <vaadin-css-layout :middle>
+       <vaadin-label icon="fonticon://Vaadin-Icons/e68b" plain-text _id="bugLabel">
+         Report a bug 
        </vaadin-label>
-      </vaadin-horizontal-layout>
+      </vaadin-css-layout>
+      <vaadin-css-layout :middle>
+       <vaadin-label icon="fonticon://Vaadin-Icons/e6ae" plain-text _id="requestAFeature">
+         Request a feature 
+       </vaadin-label>
+      </vaadin-css-layout>
+      <vaadin-css-layout :middle>
+       <vaadin-label icon="fonticon://Vaadin-Icons/e7d3" plain-text _id="manageLabel">
+         Manage reports 
+       </vaadin-label>
+      </vaadin-css-layout>
+      <vaadin-css-layout :middle>
+       <vaadin-label plain-text _id="projectCountLable">
+         123 
+       </vaadin-label>
+      </vaadin-css-layout>
+     </vaadin-horizontal-layout>
+     <vaadin-horizontal-layout width-full>
+      <vaadin-css-layout width-full :middle :right>
+       <vaadin-text-field width-full></vaadin-text-field>
+      </vaadin-css-layout>
      </vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
     <vaadin-horizontal-layout>
-     <vaadin-horizontal-layout>
-      <vaadin-image width="30px" _id="bugIcon"></vaadin-image>
-      <vaadin-label plain-text _id="bugLabel">
-        Report a bug 
-      </vaadin-label>
-     </vaadin-horizontal-layout>
-     <vaadin-horizontal-layout height="30px">
-      <vaadin-image width="30px" _id="requestIcon"></vaadin-image>
-      <vaadin-label plain-text _id="requestLabel">
-        Request a feature 
-      </vaadin-label>
-     </vaadin-horizontal-layout>
-     <vaadin-horizontal-layout height="30px">
-      <vaadin-image width="30px" _id="manageIcon"></vaadin-image>
-      <vaadin-label plain-text _id="manageLabel">
-        Manage project 
-      </vaadin-label>
-      <vaadin-label plain-text _id="projectCountLable">
-        123 
-      </vaadin-label>
-     </vaadin-horizontal-layout>
-     <vaadin-text-field value="Search reports..." _id="searchBar"></vaadin-text-field>
+     <vaadin-label plain-text :middle>
+       Reports for 
+     </vaadin-label>
+     <vaadin-combo-box data-item-type="java.lang.String" :middle>
+      <option item="Option1">Option 1</option>
+      <option item="Option2">Option 2</option>
+      <option item="Option3">Option 3</option>
+     </vaadin-combo-box>
     </vaadin-horizontal-layout>
+    <vaadin-horizontal-layout>
+     <vaadin-label plain-text _id="assigneeLabel" :middle>
+       Assignees 
+     </vaadin-label>
+     <vaadin-radio-button-group style-name="horizontal" data-item-type="java.lang.String">
+      <option item="Option1">Only me</option>
+      <option item="Option2">Everyone</option>
+     </vaadin-radio-button-group>
+     <vaadin-label plain-text _id="statusLabel" :middle>
+       Status 
+     </vaadin-label>
+     <vaadin-radio-button-group style-name="horizontal" data-item-type="java.lang.String">
+      <option item="Option1">Open</option>
+      <option item="Option2">All kinds</option>
+      <option item="Option3">Custom</option>
+     </vaadin-radio-button-group>
+    </vaadin-horizontal-layout>
+    <vaadin-grid width-full>
+     <table>
+      <colgroup>
+       <col column-id="priority" sortable>
+       <col column-id="type" sortable="false">
+       <col column-id="summary" sortable="false">
+       <col column-id="assigned-to" sortable="false">
+       <col column-id="last-modified" sortable="false">
+       <col column-id="reported" sortable="false">
+      </colgroup>
+      <thead>
+       <tr default>
+        <th plain-text column-ids="priority">PRIORTIY</th>
+        <th plain-text column-ids="type">TYPE</th>
+        <th plain-text column-ids="summary">SUMMARY</th>
+        <th plain-text column-ids="assigned-to">ASSIGNED TO</th>
+        <th plain-text column-ids="last-modified">LAST MODIFIED</th>
+        <th plain-text column-ids="reported">REPORTED</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr item="project1">
+        <td>5</td>
+        <td>Bug</td>
+        <td>Some bug</td>
+        <td>Cuong Phan</td>
+        <td>2 mins ago</td>
+        <td>1 hour ago</td>
+       </tr>
+      </tbody>
+     </table>
+    </vaadin-grid>
    </vaadin-vertical-layout>
-  </vaadin-css-layout>
+  </vaadin-vertical-layout>
  </body>
 </html>

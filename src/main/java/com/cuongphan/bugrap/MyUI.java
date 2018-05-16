@@ -30,7 +30,6 @@ public class MyUI extends UI {
         setContent(layout);
 
         BugrapRepository bugrapRepository = new BugrapRepository(".");
-        String test = "";
 
     }
 
