@@ -39,7 +39,7 @@ public class BugrapApp extends VerticalLayout {
     protected Button openButton;
     protected Button allKindsButton;
     protected Button customButton;
-    protected Grid grid;
+    protected Grid<org.vaadin.bugrap.domain.entities.Report> reportGrid;
 
     public BugrapApp() {
         Design.read(this);

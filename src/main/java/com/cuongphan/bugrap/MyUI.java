@@ -82,32 +82,29 @@ public class MyUI extends UI {
         needMoreInfoItem.setCheckable(true);
 
         //set expand ratio for grid columns
-        layout.grid.getColumn("priority").setExpandRatio(1);
-        layout.grid.getColumn("type").setExpandRatio(1);
-        layout.grid.getColumn("summary").setExpandRatio(8);
-        layout.grid.getColumn("assigned-to").setExpandRatio(2);
-        layout.grid.getColumn("last-modified").setExpandRatio(1);
-        layout.grid.getColumn("reported").setExpandRatio(1);
+        layout.reportGrid.getColumn("priority").setExpandRatio(1);
+        layout.reportGrid.getColumn("type").setExpandRatio(1);
+        layout.reportGrid.getColumn("summary").setExpandRatio(8);
+        layout.reportGrid.getColumn("assigned").setExpandRatio(2);
+        layout.reportGrid.getColumn("timestamp").setExpandRatio(1);
+        layout.reportGrid.getColumn("reportedTimestamp").setExpandRatio(1);
 
-
-
+        //get data
         BugrapRepository bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
         bugrapRepository.populateWithTestData();
 
+        //add project list data provider to project combo box in ascending order by name
         ListDataProvider<Project> projectLDP = new ListDataProvider<>(bugrapRepository.findProjects());
-
         projectLDP.setSortOrder(project -> project.getName(), SortDirection.ASCENDING);
-
         layout.projectComboBox.setDataProvider(projectLDP);
 
+        //add reports from chosen project to grid in descending order by priority
         layout.projectComboBox.addValueChangeListener(e -> {
             BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
-            query.project =  e.getValue();
             ListDataProvider<Report> reportLDP = new ListDataProvider<>(bugrapRepository.findReports(query));
-
+            reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
+            layout.reportGrid.setDataProvider(reportLDP);
         });
-
-
 
         setContent(layout);
     }

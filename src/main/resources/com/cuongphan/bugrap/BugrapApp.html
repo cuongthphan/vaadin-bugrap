@@ -87,36 +87,27 @@
        Custom 
      </vaadin-button>
     </vaadin-horizontal-layout>
-    <vaadin-grid width-full _id="grid">
+    <vaadin-grid width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" _id="reportGrid">
      <table>
       <colgroup>
        <col column-id="priority" sortable>
-       <col column-id="type" sortable="false">
-       <col column-id="summary" sortable="false">
-       <col column-id="assigned-to" sortable="false">
-       <col column-id="last-modified" sortable="false">
-       <col column-id="reported" sortable="false">
+       <col column-id="type" sortable>
+       <col column-id="summary" sortable>
+       <col column-id="assigned" sortable>
+       <col column-id="timestamp" sortable>
+       <col column-id="reportedTimestamp" sortable>
       </colgroup>
       <thead>
        <tr default>
-        <th plain-text column-ids="priority">PRIORTIY</th>
+        <th plain-text column-ids="priority">PRIORITY</th>
         <th plain-text column-ids="type">TYPE</th>
         <th plain-text column-ids="summary">SUMMARY</th>
-        <th plain-text column-ids="assigned-to">ASSIGNED TO</th>
-        <th plain-text column-ids="last-modified">LAST MODIFIED</th>
-        <th plain-text column-ids="reported">REPORTED</th>
+        <th plain-text column-ids="assigned">ASSIGNED</th>
+        <th plain-text column-ids="timestamp">LAST MODIFIED</th>
+        <th plain-text column-ids="reportedTimestamp">REPORTED</th>
        </tr>
       </thead>
-      <tbody>
-       <tr item="project1">
-        <td>5</td>
-        <td>Bug</td>
-        <td>Some bug</td>
-        <td>Cuong Phan</td>
-        <td>2 mins ago</td>
-        <td>1 hour ago</td>
-       </tr>
-      </tbody>
+      <tbody></tbody>
      </table>
     </vaadin-grid>
    </vaadin-vertical-layout>
