@@ -11,11 +11,7 @@
   <vaadin-vertical-layout>
    <vaadin-vertical-layout>
     <vaadin-horizontal-layout width-full>
-     <vaadin-combo-box width-full data-item-type="java.lang.String" :middle>
-      <option item="Option1">Option 1</option>
-      <option item="Option2">Option 2</option>
-      <option item="Option3">Option 3</option>
-     </vaadin-combo-box>
+     <vaadin-combo-box width-full data-item-type="org.vaadin.bugrap.domain.entities.Project" _id="projectComboBox" :middle></vaadin-combo-box>
      <vaadin-horizontal-layout size-full :right>
       <vaadin-horizontal-layout height-full :middle :right>
        <vaadin-css-layout :middle :right>
@@ -24,7 +20,7 @@
         </vaadin-label>
        </vaadin-css-layout>
        <vaadin-css-layout :middle :right>
-        <vaadin-label icon="fonticon://Vaadin-Icons/e6ac" plain-text _id="logoutLabel">
+        <vaadin-label icon="fonticon://Vaadin-Icons/e6ab" plain-text _id="logoutLabel">
           Logout 
         </vaadin-label>
        </vaadin-css-layout>
@@ -34,7 +30,7 @@
     <vaadin-horizontal-layout width-full>
      <vaadin-horizontal-layout :middle>
       <vaadin-css-layout :middle>
-       <vaadin-label icon="fonticon://Vaadin-Icons/e68b" plain-text _id="bugLabel">
+       <vaadin-label icon="fonticon://Vaadin-Icons/e68a" plain-text _id="bugLabel">
          Report a bug 
        </vaadin-label>
       </vaadin-css-layout>
@@ -44,7 +40,7 @@
        </vaadin-label>
       </vaadin-css-layout>
       <vaadin-css-layout :middle>
-       <vaadin-label icon="fonticon://Vaadin-Icons/e7d3" plain-text _id="manageLabel">
+       <vaadin-label icon="fonticon://Vaadin-Icons/e764" plain-text _id="manageLabel">
          Manage reports 
        </vaadin-label>
       </vaadin-css-layout>
@@ -70,9 +66,26 @@
      <vaadin-label plain-text _id="assigneeLabel" :middle>
        Assignees 
      </vaadin-label>
+     <vaadin-horizontal-layout _id="assigneeLayout">
+      <vaadin-button plain-text _id="onlyMeButton">
+        Only me 
+      </vaadin-button>
+      <vaadin-button plain-text _id="everyoneButton">
+        Everyone 
+      </vaadin-button>
+     </vaadin-horizontal-layout>
      <vaadin-label plain-text _id="statusLabel" :middle>
        Status 
      </vaadin-label>
+     <vaadin-button plain-text _id="openButton">
+       Open 
+     </vaadin-button>
+     <vaadin-button plain-text _id="allKindsButton">
+       All kinds 
+     </vaadin-button>
+     <vaadin-button plain-text _id="customButton">
+       Custom 
+     </vaadin-button>
     </vaadin-horizontal-layout>
     <vaadin-grid width-full _id="grid">
      <table>

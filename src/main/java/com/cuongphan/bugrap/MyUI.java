@@ -2,16 +2,22 @@ package com.cuongphan.bugrap;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
 import org.vaadin.addons.searchbox.SearchBox;
 import org.vaadin.bugrap.domain.BugrapRepository;
+import org.vaadin.bugrap.domain.entities.Project;
+import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.peter.buttongroup.ButtonGroup;
 
 /**
@@ -22,6 +28,7 @@ import org.vaadin.peter.buttongroup.ButtonGroup;
  * overridden to add component to the user interface and initialize non-component functionality.
  */
 @Theme("mytheme")
+@StyleSheet({"https://fonts.googleapis.com/css?family=Roboto"})
 public class MyUI extends UI {
 
     @Override
@@ -38,34 +45,8 @@ public class MyUI extends UI {
 
         layout.searchBoxLayout.addComponent(searchBox);
 
-        //add Assignee button group
-        ButtonGroup assigneeBG = new ButtonGroup();
-        Button onlyMeButton = new Button("Only me");
-        onlyMeButton.setId("onlyMeButton");
-        assigneeBG.addButton(onlyMeButton);
-
-        Button everyoneButton = new Button("Everyone");
-        everyoneButton.setId("everyoneButton");
-        assigneeBG.addButton(everyoneButton);
-
-        layout.filterLayout.addComponent(assigneeBG,
-                layout.filterLayout.getComponentIndex(layout.assigneeLabel) + 1);
-
-        //add Status button group
-        ButtonGroup statusBG = new ButtonGroup();
-        Button openButton = new Button("Open");
-        openButton.setId("openButton");
-        statusBG.addButton(openButton);
-
-        Button allKindsButton = new Button("All kinds");
-        allKindsButton.setId("allKindsButton");
-        statusBG.addButton(allKindsButton);
-
-        Button customButton = new Button("Custom");
-        customButton.setId("customButton");
-
         //add context menu to custom button
-        ContextMenu contextMenu = new ContextMenu(customButton, true);
+        ContextMenu contextMenu = new ContextMenu(layout.customButton, true);
 
         MenuItem openItem = contextMenu.addItem("Open", e -> {
             Notification.show("Open: " + e.isChecked());
@@ -100,11 +81,6 @@ public class MyUI extends UI {
         });
         needMoreInfoItem.setCheckable(true);
 
-        statusBG.addButton(customButton);
-
-        layout.filterLayout.addComponent(statusBG,
-                layout.filterLayout.getComponentIndex(layout.statusLabel) + 1);
-
         //set expand ratio for grid columns
         layout.grid.getColumn("priority").setExpandRatio(1);
         layout.grid.getColumn("type").setExpandRatio(1);
@@ -113,11 +89,27 @@ public class MyUI extends UI {
         layout.grid.getColumn("last-modified").setExpandRatio(1);
         layout.grid.getColumn("reported").setExpandRatio(1);
 
+
+
+        BugrapRepository bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
+        bugrapRepository.populateWithTestData();
+
+        ListDataProvider<Project> projectLDP = new ListDataProvider<>(bugrapRepository.findProjects());
+
+        projectLDP.setSortOrder(project -> project.getName(), SortDirection.ASCENDING);
+
+        layout.projectComboBox.setDataProvider(projectLDP);
+
+        layout.projectComboBox.addValueChangeListener(e -> {
+            BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
+            query.project =  e.getValue();
+            ListDataProvider<Report> reportLDP = new ListDataProvider<>(bugrapRepository.findReports(query));
+
+        });
+
+
+
         setContent(layout);
-
-        BugrapRepository bugrapRepository = new BugrapRepository(".");
-
-
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
