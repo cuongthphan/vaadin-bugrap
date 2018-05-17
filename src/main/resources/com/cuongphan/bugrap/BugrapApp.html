@@ -4,12 +4,14 @@
   <meta charset="UTF-8">
   <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;GENERATE_GETTERS&quot;:false,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
   <meta name="vaadin-version" content="8.1.5">
+  <meta name="package-mapping" content="org_vaadin_addons_searchbox:org.vaadin.addons.searchbox">
+  <meta name="package-mapping" content="org_vaadin_peter_buttongroup:org.vaadin.peter.buttongroup">
  </head>
  <body>
   <vaadin-vertical-layout>
    <vaadin-vertical-layout>
     <vaadin-horizontal-layout width-full>
-     <vaadin-combo-box width-full data-item-type="java.lang.String">
+     <vaadin-combo-box width-full data-item-type="java.lang.String" :middle>
       <option item="Option1">Option 1</option>
       <option item="Option2">Option 2</option>
       <option item="Option3">Option 3</option>
@@ -52,11 +54,7 @@
        </vaadin-label>
       </vaadin-css-layout>
      </vaadin-horizontal-layout>
-     <vaadin-horizontal-layout width-full>
-      <vaadin-css-layout width-full :middle :right>
-       <vaadin-text-field width-full></vaadin-text-field>
-      </vaadin-css-layout>
-     </vaadin-horizontal-layout>
+     <vaadin-horizontal-layout width="80%" _id="searchBoxLayout" :middle :right></vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
     <vaadin-horizontal-layout>
      <vaadin-label plain-text :middle>
@@ -68,24 +66,15 @@
       <option item="Option3">Option 3</option>
      </vaadin-combo-box>
     </vaadin-horizontal-layout>
-    <vaadin-horizontal-layout>
+    <vaadin-horizontal-layout _id="filterLayout">
      <vaadin-label plain-text _id="assigneeLabel" :middle>
        Assignees 
      </vaadin-label>
-     <vaadin-radio-button-group style-name="horizontal" data-item-type="java.lang.String">
-      <option item="Option1">Only me</option>
-      <option item="Option2">Everyone</option>
-     </vaadin-radio-button-group>
      <vaadin-label plain-text _id="statusLabel" :middle>
        Status 
      </vaadin-label>
-     <vaadin-radio-button-group style-name="horizontal" data-item-type="java.lang.String">
-      <option item="Option1">Open</option>
-      <option item="Option2">All kinds</option>
-      <option item="Option3">Custom</option>
-     </vaadin-radio-button-group>
     </vaadin-horizontal-layout>
-    <vaadin-grid width-full>
+    <vaadin-grid width-full _id="grid">
      <table>
       <colgroup>
        <col column-id="priority" sortable>
