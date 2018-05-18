@@ -74,8 +74,14 @@ $v-border-radius: 10px;
     color: white;
   }
 
+  .v-select-select {
+    min-width: 100px;
+  }
+
   #projectCountLabel{
     background-color: $color-one;
+    padding: 0 10px;
+    border-radius: 100%;
     color: white;
   }
 }

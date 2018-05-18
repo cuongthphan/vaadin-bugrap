@@ -14603,7 +14603,13 @@ div.v-layout.v-horizontal.v-widget {
 	color: white;
 }
 
+.mytheme .v-select-select {
+	min-width: 100px;
+}
+
 .mytheme #projectCountLabel {
 	background-color: #05386B;
+	padding: 0 10px;
+	border-radius: 100%;
 	color: white;
 }

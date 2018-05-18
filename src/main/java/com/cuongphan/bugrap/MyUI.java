@@ -19,6 +19,9 @@ import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This UI is the application entry point. A UI may either represent a browser window
  * (or tab) or some part of an HTML page where a Vaadin application is embedded.
@@ -50,37 +53,34 @@ public class MyUI extends UI {
         //add context menu to custom button
         ContextMenu contextMenu = new ContextMenu(layout.customButton, true);
 
-        MenuItem openItem = contextMenu.addItem("Open", e -> {
-            Notification.show("Open: " + e.isChecked());
-        });
+        ContextMenu.Command command = new ContextMenu.Command() {
+            private Set<String> checkedItems = new HashSet<>();
+            
+            public void menuSelected(MenuItem item) {
+                if (item.isChecked()) {
+                    checkedItems.add(item.getText());
+                } else {
+                    checkedItems.remove(item.getText());
+                }
+            }
+        };
+
+        MenuItem openItem = contextMenu.addItem("Open", null, command);
         openItem.setCheckable(true);
-        MenuItem fixedItem = contextMenu.addItem("Fixed", e -> {
-            Notification.show("Fixed: " + e.isChecked());
-        });
+        contextMenu.addSeparator();
+        MenuItem fixedItem = contextMenu.addItem("Fixed", null, command);
         fixedItem.setCheckable(true);
-        MenuItem invalidItem = contextMenu.addItem("Invalid", e -> {
-            Notification.show("Invalid: " + e.isChecked());
-        });
+        MenuItem invalidItem = contextMenu.addItem("Invalid", null, command);
         invalidItem.setCheckable(true);
-        MenuItem wontFixItem = contextMenu.addItem("Won't fix", e -> {
-            Notification.show("Won't fix: " + e.isChecked());
-        });
+        MenuItem wontFixItem = contextMenu.addItem("Won't fix", null, command);
         wontFixItem.setCheckable(true);
-        MenuItem cantFixItem = contextMenu.addItem("Can't fix", e -> {
-            Notification.show("Can't fix: " + e.isChecked());
-        });
+        MenuItem cantFixItem = contextMenu.addItem("Can't fix", null, command);
         cantFixItem.setCheckable(true);
-        MenuItem duplicateItem = contextMenu.addItem("Duplicate", e -> {
-            Notification.show("Duplicate: " + e.isChecked());
-        });
+        MenuItem duplicateItem = contextMenu.addItem("Duplicate", null, command);
         duplicateItem.setCheckable(true);
-        MenuItem worksForMeItem = contextMenu.addItem("Works for me", e -> {
-            Notification.show("Works for me: " + e.isChecked());
-        });
+        MenuItem worksForMeItem = contextMenu.addItem("Works for me", null, command);
         worksForMeItem.setCheckable(true);
-        MenuItem needMoreInfoItem = contextMenu.addItem("Need more information", e -> {
-            Notification.show("Need more information: " + e.isChecked());
-        });
+        MenuItem needMoreInfoItem = contextMenu.addItem("Need more information", null, command);
         needMoreInfoItem.setCheckable(true);
 
         //set expand ratio for grid columns
@@ -101,6 +101,7 @@ public class MyUI extends UI {
         ListDataProvider<Project> projectLDP = new ListDataProvider<>(bugrapRepository.findProjects());
         projectLDP.setSortOrder(project -> project.getName(), SortDirection.ASCENDING);
         layout.projectComboBox.setDataProvider(projectLDP);
+        layout.projectComboBox.setEmptySelectionAllowed(false);
 
         //add reports from chosen project to grid in descending order by priority
         layout.projectComboBox.addValueChangeListener(e -> {
@@ -111,12 +112,9 @@ public class MyUI extends UI {
         });
 
         layout.versionNS.addValueChangeListener(e -> {
-            refreshGridData();
+            if (layout.projectComboBox.getValue() != null)
+                refreshGridData();
         });
-
-
-
-
 
         setContent(layout);
     }
@@ -125,7 +123,8 @@ public class MyUI extends UI {
         BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
         query.project = layout.projectComboBox.getValue();
         query.projectVersion = layout.versionNS.getValue();
-        ListDataProvider<Report> reportLDP = new ListDataProvider<>(bugrapRepository.findReports(query));
+        Set<Report> reports = bugrapRepository.findReports(query);
+        ListDataProvider<Report> reportLDP = new ListDataProvider<>(reports);
         reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
         layout.reportGrid.setDataProvider(reportLDP);
     }

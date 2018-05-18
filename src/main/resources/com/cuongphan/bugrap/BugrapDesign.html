@@ -11,7 +11,7 @@
   <vaadin-vertical-layout>
    <vaadin-vertical-layout>
     <vaadin-horizontal-layout width-full>
-     <vaadin-combo-box width-full data-item-type="org.vaadin.bugrap.domain.entities.Project" _id="projectComboBox" :middle></vaadin-combo-box>
+     <vaadin-combo-box placeholder="Select a project" width-full data-item-type="org.vaadin.bugrap.domain.entities.Project" _id="projectComboBox" :middle></vaadin-combo-box>
      <vaadin-horizontal-layout size-full :right>
       <vaadin-horizontal-layout height-full :middle :right>
        <vaadin-css-layout :middle :right>
@@ -72,15 +72,17 @@
      <vaadin-label plain-text _id="statusLabel" :middle>
        Status 
      </vaadin-label>
-     <vaadin-button plain-text _id="openButton">
-       Open 
-     </vaadin-button>
-     <vaadin-button plain-text _id="allKindsButton">
-       All kinds 
-     </vaadin-button>
-     <vaadin-button plain-text _id="customButton">
-       Custom 
-     </vaadin-button>
+     <vaadin-horizontal-layout>
+      <vaadin-button plain-text _id="openButton">
+        Open 
+      </vaadin-button>
+      <vaadin-button plain-text _id="allKindsButton">
+        All kinds 
+      </vaadin-button>
+      <vaadin-button plain-text _id="customButton">
+        Custom 
+      </vaadin-button>
+     </vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
     <vaadin-grid width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" _id="reportGrid">
      <table>
