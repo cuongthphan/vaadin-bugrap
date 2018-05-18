@@ -9,7 +9,6 @@ import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.data.sort.SortDirection;
@@ -17,8 +16,8 @@ import com.vaadin.ui.*;
 import org.vaadin.addons.searchbox.SearchBox;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
+import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
-import org.vaadin.peter.buttongroup.ButtonGroup;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window
@@ -31,9 +30,12 @@ import org.vaadin.peter.buttongroup.ButtonGroup;
 @StyleSheet({"https://fonts.googleapis.com/css?family=Roboto"})
 public class MyUI extends UI {
 
+    private BugrapRepository bugrapRepository;
+    private BugrapDesign layout;
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        final BugrapApp layout = new BugrapApp();
+        layout = new BugrapDesign();
 
         //add search box
         SearchBox searchBox = new SearchBox(VaadinIcons.SEARCH, SearchBox.ButtonPosition.LEFT);
@@ -90,8 +92,10 @@ public class MyUI extends UI {
         layout.reportGrid.getColumn("reportedTimestamp").setExpandRatio(1);
 
         //get data
-        BugrapRepository bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
+        bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
         bugrapRepository.populateWithTestData();
+        layout.projectCountLable.setValue(Integer.toString(bugrapRepository.findProjects().size()));
+        layout.projectCountLable.setId("projectCountLabel");
 
         //add project list data provider to project combo box in ascending order by name
         ListDataProvider<Project> projectLDP = new ListDataProvider<>(bugrapRepository.findProjects());
@@ -100,13 +104,30 @@ public class MyUI extends UI {
 
         //add reports from chosen project to grid in descending order by priority
         layout.projectComboBox.addValueChangeListener(e -> {
-            BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
-            ListDataProvider<Report> reportLDP = new ListDataProvider<>(bugrapRepository.findReports(query));
-            reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
-            layout.reportGrid.setDataProvider(reportLDP);
+            ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(e.getValue()));
+            layout.versionNS.setDataProvider(projectVersionLDP);
+
+            refreshGridData();
         });
 
+        layout.versionNS.addValueChangeListener(e -> {
+            refreshGridData();
+        });
+
+
+
+
+
         setContent(layout);
+    }
+
+    private void refreshGridData() {
+        BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
+        query.project = layout.projectComboBox.getValue();
+        query.projectVersion = layout.versionNS.getValue();
+        ListDataProvider<Report> reportLDP = new ListDataProvider<>(bugrapRepository.findReports(query));
+        reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
+        layout.reportGrid.setDataProvider(reportLDP);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

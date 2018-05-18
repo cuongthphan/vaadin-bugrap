@@ -14602,3 +14602,8 @@ div.v-layout.v-horizontal.v-widget {
 	background: #279683 none;
 	color: white;
 }
+
+.mytheme #projectCountLabel {
+	background-color: #05386B;
+	color: white;
+}
