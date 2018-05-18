@@ -38,6 +38,7 @@ public class MyUI extends UI {
     private BugrapRepository bugrapRepository;
     private BugrapDesign layout;
     private Set<String> checkedItems = new HashSet<>();
+    private String focusButtonStyle = "focus-button";
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -63,7 +64,6 @@ public class MyUI extends UI {
                 }
             }
         };
-
         MenuItem openItem = contextMenu.addItem("Open", null, command);
         openItem.setCheckable(true);
         contextMenu.addSeparator();
@@ -130,18 +130,31 @@ public class MyUI extends UI {
         });
 
         //filter with assignee buttons
-
         layout.onlyMeButton.addClickListener(e -> {
-            layout.onlyMeButton.setEnabled(false);
-            layout.everyoneButton.setEnabled(true);
+            if (layout.onlyMeButton.getStyleName().equals(focusButtonStyle)) {
+                return;
+            }
+
+            layout.onlyMeButton.addStyleName(focusButtonStyle);
+            layout.everyoneButton.removeStyleName(focusButtonStyle);
             refreshGridData();
         });
 
         layout.everyoneButton.addClickListener(e -> {
-            layout.onlyMeButton.setEnabled(true);
-            layout.everyoneButton.setEnabled(false);
+            if (layout.everyoneButton.getStyleName().equals(focusButtonStyle)) {
+                return;
+            }
+            layout.onlyMeButton.removeStyleName(focusButtonStyle);
+            layout.everyoneButton.addStyleName(focusButtonStyle);
             refreshGridData();
         });
+
+        //filter with status buttons
+        /*layout.openButton.addClickListener(e -> {
+            layout.openButton.setEnabled(false);
+            layout.allKindsButton.setEnabled(true);
+            layout.customButton.set
+        });*/
 
         setContent(layout);
     }
@@ -163,7 +176,7 @@ public class MyUI extends UI {
         reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
 
         //filter the reports if only me button is click
-        if (!layout.onlyMeButton.isEnabled()) {
+        if (layout.onlyMeButton.getStyleName().equals(focusButtonStyle)) {
             SerializablePredicate<Report> reportSP = new SerializablePredicate<Report>() {
                 @Override
                 public boolean test(Report report) {

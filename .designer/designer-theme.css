@@ -14613,3 +14613,8 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 100%;
 	color: white;
 }
+
+.mytheme .focus-button {
+	background: #5CDB95;
+	color: white;
+}
