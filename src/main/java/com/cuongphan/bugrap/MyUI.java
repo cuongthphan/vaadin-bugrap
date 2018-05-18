@@ -35,7 +35,7 @@ public class MyUI extends UI {
 
     private BugrapRepository bugrapRepository;
     private BugrapDesign layout;
-
+    private Set<String> checkedItems = new HashSet<>();
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         layout = new BugrapDesign();
@@ -52,16 +52,14 @@ public class MyUI extends UI {
 
         //add context menu to custom button
         ContextMenu contextMenu = new ContextMenu(layout.customButton, true);
-
         ContextMenu.Command command = new ContextMenu.Command() {
-            private Set<String> checkedItems = new HashSet<>();
-            
             public void menuSelected(MenuItem item) {
                 if (item.isChecked()) {
                     checkedItems.add(item.getText());
                 } else {
                     checkedItems.remove(item.getText());
                 }
+                Notification.show(checkedItems.toString());
             }
         };
 
@@ -84,10 +82,12 @@ public class MyUI extends UI {
         needMoreInfoItem.setCheckable(true);
 
         //set expand ratio for grid columns
+        layout.reportGrid.getColumn("version").setExpandRatio(1);
+        layout.reportGrid.getColumn("version").setHidden(true);
         layout.reportGrid.getColumn("priority").setExpandRatio(1);
         layout.reportGrid.getColumn("type").setExpandRatio(1);
         layout.reportGrid.getColumn("summary").setExpandRatio(8);
-        layout.reportGrid.getColumn("assigned").setExpandRatio(2);
+        layout.reportGrid.getColumn("assigned").setExpandRatio(1);
         layout.reportGrid.getColumn("timestamp").setExpandRatio(1);
         layout.reportGrid.getColumn("reportedTimestamp").setExpandRatio(1);
 
@@ -103,17 +103,29 @@ public class MyUI extends UI {
         layout.projectComboBox.setDataProvider(projectLDP);
         layout.projectComboBox.setEmptySelectionAllowed(false);
 
-        //add reports from chosen project to grid in descending order by priority
+        //add version from chosen project to version native select
+        //and reset context menu and grid
         layout.projectComboBox.addValueChangeListener(e -> {
+            layout.reportGrid.setItems();
+            checkedItems.clear();
+            for (MenuItem item : contextMenu.getItems()) {
+                item.setChecked(false);
+            }
             ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(e.getValue()));
             layout.versionNS.setDataProvider(projectVersionLDP);
-
-            refreshGridData();
+            if (projectVersionLDP.getItems().size() > 1) {
+                layout.versionNS.setEmptySelectionCaption("All versions");
+            }
+            else {
+                layout.versionNS.setEmptySelectionAllowed(false);
+            }
         });
 
         layout.versionNS.addValueChangeListener(e -> {
-            if (layout.projectComboBox.getValue() != null)
-                refreshGridData();
+            if (e.isUserOriginated()) {
+                if (layout.projectComboBox.getValue() != null)
+                    refreshGridData();
+            }
         });
 
         setContent(layout);
@@ -123,10 +135,12 @@ public class MyUI extends UI {
         BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
         query.project = layout.projectComboBox.getValue();
         query.projectVersion = layout.versionNS.getValue();
+
         Set<Report> reports = bugrapRepository.findReports(query);
         ListDataProvider<Report> reportLDP = new ListDataProvider<>(reports);
         reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
         layout.reportGrid.setDataProvider(reportLDP);
+        Notification.show(Integer.toString(reportLDP.getItems().size()));
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
