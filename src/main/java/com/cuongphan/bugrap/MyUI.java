@@ -8,6 +8,7 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.contextmenu.ContextMenu;
 import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.data.provider.Sort;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
@@ -138,7 +139,15 @@ public class MyUI extends UI {
 
         Set<Report> reports = bugrapRepository.findReports(query);
         ListDataProvider<Report> reportLDP = new ListDataProvider<>(reports);
+
+        if (query.projectVersion == null) {
+            layout.reportGrid.getColumn("version").setHidden(false);
+        }
+        else {
+            layout.reportGrid.getColumn("version").setHidden(true);
+        }
         reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
+
         layout.reportGrid.setDataProvider(reportLDP);
         Notification.show(Integer.toString(reportLDP.getItems().size()));
     }
