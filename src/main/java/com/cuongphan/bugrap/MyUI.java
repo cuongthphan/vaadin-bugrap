@@ -10,6 +10,7 @@ import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.provider.Sort;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.SerializablePredicate;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.data.sort.SortDirection;
@@ -37,6 +38,7 @@ public class MyUI extends UI {
     private BugrapRepository bugrapRepository;
     private BugrapDesign layout;
     private Set<String> checkedItems = new HashSet<>();
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         layout = new BugrapDesign();
@@ -46,7 +48,6 @@ public class MyUI extends UI {
         searchBox.setButtonJoined(true);
         searchBox.getSearchField().setPlaceholder("Search reports...");
         searchBox.setSuggestionListSize(5);
-        searchBox.addSearchListener(e -> Notification.show(e.getSearchTerm()));
         searchBox.setWidth(100, Unit.PERCENTAGE);
 
         layout.searchBoxLayout.addComponent(searchBox);
@@ -60,7 +61,6 @@ public class MyUI extends UI {
                 } else {
                     checkedItems.remove(item.getText());
                 }
-                Notification.show(checkedItems.toString());
             }
         };
 
@@ -129,6 +129,20 @@ public class MyUI extends UI {
             }
         });
 
+        //filter with assignee buttons
+
+        layout.onlyMeButton.addClickListener(e -> {
+            layout.onlyMeButton.setEnabled(false);
+            layout.everyoneButton.setEnabled(true);
+            refreshGridData();
+        });
+
+        layout.everyoneButton.addClickListener(e -> {
+            layout.onlyMeButton.setEnabled(true);
+            layout.everyoneButton.setEnabled(false);
+            refreshGridData();
+        });
+
         setContent(layout);
     }
 
@@ -148,8 +162,21 @@ public class MyUI extends UI {
         }
         reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
 
+        //filter the reports if only me button is click
+        if (!layout.onlyMeButton.isEnabled()) {
+            SerializablePredicate<Report> reportSP = new SerializablePredicate<Report>() {
+                @Override
+                public boolean test(Report report) {
+                    if (report.getAssigned() != null)
+                        if (report.getAssigned().getName().equals(layout.userName.getValue()))
+                            return true;
+                    return false;
+                }
+            };
+            reportLDP.setFilter(reportSP);
+        }
+
         layout.reportGrid.setDataProvider(reportLDP);
-        Notification.show(Integer.toString(reportLDP.getItems().size()));
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
