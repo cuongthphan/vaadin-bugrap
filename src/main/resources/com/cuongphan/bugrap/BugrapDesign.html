@@ -27,6 +27,12 @@
       </vaadin-horizontal-layout>
      </vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
+    <vaadin-horizontal-layout>
+     <vaadin-label plain-text :middle>
+       Reports for 
+     </vaadin-label>
+     <vaadin-native-select height-full data-item-type="org.vaadin.bugrap.domain.entities.ProjectVersion" _id="versionNS"></vaadin-native-select>
+    </vaadin-horizontal-layout>
     <vaadin-horizontal-layout width-full>
      <vaadin-horizontal-layout :middle>
       <vaadin-css-layout :middle>
@@ -51,37 +57,18 @@
      </vaadin-horizontal-layout>
      <vaadin-horizontal-layout width="80%" _id="searchBoxLayout" :middle :right></vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
-    <vaadin-horizontal-layout>
-     <vaadin-label plain-text :middle>
-       Reports for 
-     </vaadin-label>
-     <vaadin-native-select height-full data-item-type="org.vaadin.bugrap.domain.entities.ProjectVersion" _id="versionNS"></vaadin-native-select>
-    </vaadin-horizontal-layout>
     <vaadin-horizontal-layout _id="filterLayout">
-     <vaadin-label plain-text _id="assigneeLabel" :middle>
-       Assignees 
-     </vaadin-label>
      <vaadin-horizontal-layout _id="assigneeLayout">
-      <vaadin-button plain-text _id="onlyMeButton">
-        Only me 
-      </vaadin-button>
-      <vaadin-button plain-text _id="everyoneButton">
-        Everyone 
-      </vaadin-button>
+      <vaadin-label plain-text _id="assigneeLabel" :middle>
+        Assignees 
+      </vaadin-label>
+      <vaadin-menu-bar _id="assigneeMB"></vaadin-menu-bar>
      </vaadin-horizontal-layout>
-     <vaadin-label plain-text _id="statusLabel" :middle>
-       Status 
-     </vaadin-label>
-     <vaadin-horizontal-layout>
-      <vaadin-button plain-text _id="openButton">
-        Open 
-      </vaadin-button>
-      <vaadin-button plain-text _id="allKindsButton">
-        All kinds 
-      </vaadin-button>
-      <vaadin-button plain-text _id="customButton">
-        Custom 
-      </vaadin-button>
+     <vaadin-horizontal-layout _id="statusLayout">
+      <vaadin-label plain-text _id="statusLabel" :middle>
+        Status 
+      </vaadin-label>
+      <vaadin-menu-bar _id="statusMB"></vaadin-menu-bar>
      </vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
     <vaadin-grid width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" _id="reportGrid">

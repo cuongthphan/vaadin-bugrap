@@ -1781,8 +1781,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme select:focus {
 	outline: none;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-disabled {
@@ -2161,8 +2159,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-button:focus:after {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-button:active:after {
@@ -2200,8 +2196,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-button-primary:focus:after {
 	border: inherit;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-button-primary:active:after {
@@ -2236,8 +2230,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-button-friendly:focus:after {
 	border: inherit;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-button-friendly:active:after {
@@ -2272,8 +2264,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-button-danger:focus:after {
 	border: inherit;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-button-danger:active:after {
@@ -2542,10 +2532,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .mytheme .v-checkbox > input:focus ~ label:before {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 :root .mytheme .v-checkbox > input ~ label:before, :root .mytheme .v-checkbox > input ~ label:after {
@@ -2665,10 +2653,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .mytheme .v-checkbox-small > input:focus ~ label:before {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 :root .mytheme .v-checkbox-small > input ~ label:before, :root .mytheme .v-checkbox-small > input ~ label:after {
@@ -2788,10 +2774,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .mytheme .v-checkbox-large > input:focus ~ label:before {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 :root .mytheme .v-checkbox-large > input ~ label:before, :root .mytheme .v-checkbox-large > input ~ label:after {
@@ -2930,10 +2914,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 .mytheme .v-filterselect [class*="input"][class*="prompt"] {
@@ -3271,10 +3253,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 .mytheme .v-filterselect-no-input [class$="button"] {
@@ -4085,10 +4065,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95, none;
-	box-shadow: 0 0 0 1px #5CDB95, none;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	-webkit-box-shadow: none;
+	box-shadow: none;
 }
 
 .mytheme .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-textfield:focus, .mytheme .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-textarea:focus, .mytheme .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-filterselect input:focus, .mytheme .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-datefield input:focus, .mytheme .v-formlayout.light  > table > tbody > [class*="row"] > [class*="contentcell"]  > .v-richtextarea:focus {
@@ -4786,8 +4764,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-editor {
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 	border-color: #5CDB95;
 }
 
@@ -5043,10 +5019,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 .mytheme .v-textfield[class*="prompt"] {
@@ -5483,10 +5457,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 .mytheme .v-textarea[class*="prompt"] {
@@ -5710,10 +5682,8 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-transition: none;
 	transition: none;
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 .mytheme .v-datefield [class*="textfield"][class*="prompt"] {
@@ -5923,8 +5893,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-datefield-popup .v-datefield-calendarpanel-day.v-datefield-calendarpanel-day-focused {
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 	position: relative;
 }
 
@@ -6106,8 +6074,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-datefield-calendarpanel-day.v-datefield-calendarpanel-day-focused {
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 	position: relative;
 }
 
@@ -6759,8 +6725,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-inline-datefield-calendarpanel-day.v-inline-datefield-calendarpanel-day-focused {
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 	position: relative;
 }
 
@@ -6981,8 +6945,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-menubar:focus:after {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-menubar  > .v-menubar-menuitem {
@@ -7371,10 +7333,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .mytheme .v-radiobutton > input:focus ~ label:before {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 :root .mytheme .v-radiobutton > input ~ label:before, :root .mytheme .v-radiobutton > input ~ label:after {
@@ -7527,10 +7487,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .mytheme .v-select-optiongroup-small .v-checkbox > input:focus ~ label:before {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 :root .mytheme .v-select-optiongroup-small .v-checkbox > input ~ label:before, :root .mytheme .v-select-optiongroup-small .v-checkbox > input ~ label:after {
@@ -7649,10 +7607,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .mytheme .v-select-optiongroup-small .v-radiobutton > input:focus ~ label:before {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 :root .mytheme .v-select-optiongroup-small .v-radiobutton > input ~ label:before, :root .mytheme .v-select-optiongroup-small .v-radiobutton > input ~ label:after {
@@ -7805,10 +7761,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .mytheme .v-select-optiongroup-large .v-checkbox > input:focus ~ label:before {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 :root .mytheme .v-select-optiongroup-large .v-checkbox > input ~ label:before, :root .mytheme .v-select-optiongroup-large .v-checkbox > input ~ label:after {
@@ -7927,10 +7881,8 @@ div.v-layout.v-horizontal.v-widget {
 
 :root .mytheme .v-select-optiongroup-large .v-radiobutton > input:focus ~ label:before {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
+	
+	
 }
 
 :root .mytheme .v-select-optiongroup-large .v-radiobutton > input ~ label:before, :root .mytheme .v-select-optiongroup-large .v-radiobutton > input ~ label:after {
@@ -9258,8 +9210,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-tree8-editor {
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 	border-color: #5CDB95;
 }
 
@@ -10320,8 +10270,6 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-treegrid-editor {
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 	border-color: #5CDB95;
 }
 
@@ -10943,8 +10891,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-table-column-selector:focus:after {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-table-column-selector:active:after {
@@ -11292,8 +11238,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-splitpanel-horizontal  > div > .v-splitpanel-hsplitter div:before:focus:after {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-splitpanel-horizontal  > div > .v-splitpanel-hsplitter div:before:active:after {
@@ -11344,8 +11288,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-splitpanel-vertical  > div > .v-splitpanel-vsplitter div:before:focus:after {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-splitpanel-vertical  > div > .v-splitpanel-vsplitter div:before:active:after {
@@ -11393,8 +11335,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-splitpanel-horizontal.large  > div > .v-splitpanel-hsplitter div:before:focus:after {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-splitpanel-horizontal.large  > div > .v-splitpanel-hsplitter div:before:active:after {
@@ -11459,8 +11399,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-splitpanel-vertical.large  > div > .v-splitpanel-vsplitter div:before:focus:after {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-splitpanel-vertical.large  > div > .v-splitpanel-vsplitter div:before:active:after {
@@ -11642,8 +11580,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-slider-handle:before:focus:after {
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-slider-handle:before:active:after {
@@ -11653,8 +11589,6 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .v-slider-handle:after {
 	border: 0 solid #a5ab9d;
 	border-color: #5CDB95;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 	opacity: 0;
 	-webkit-transition: opacity 200ms;
 	-moz-transition: opacity 200ms;
@@ -12489,8 +12423,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-select-twincol select:focus {
 	outline: none;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-select-twincol .v-textfield, .mytheme .v-select-twincol .v-nativebutton {
@@ -12575,8 +12507,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-select select:focus {
 	outline: none;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-select-select {
@@ -13292,8 +13222,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-select select:focus {
 	outline: none;
-	-webkit-box-shadow: 0 0 0 1px #5CDB95;
-	box-shadow: 0 0 0 1px #5CDB95;
 }
 
 .mytheme .v-select-select {
@@ -14607,6 +14535,27 @@ div.v-layout.v-horizontal.v-widget {
 	min-width: 100px;
 }
 
+.mytheme .v-menubar:focus {
+	outline: none;
+}
+
+.mytheme .v-menubar-menuitem:focus {
+	outline: none;
+}
+
+.mytheme .v-menubar > .v-menubar-menuitem-checked {
+	background: #5CDB95;
+	color: white;
+}
+
+.mytheme .v-caption > .v-icon {
+	padding-right: 5px;
+}
+
+.mytheme .v-menubar-popup .v-menubar-menuitem {
+	padding-left: 15px;
+}
+
 .mytheme #projectCountLabel {
 	background-color: #05386B;
 	padding: 0 10px;
@@ -14614,7 +14563,7 @@ div.v-layout.v-horizontal.v-widget {
 	color: white;
 }
 
-.mytheme .focus-button {
+.mytheme .focus-item {
 	background: #5CDB95;
 	color: white;
 }

@@ -5,10 +5,7 @@ import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.contextmenu.ContextMenu;
-import com.vaadin.contextmenu.MenuItem;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.data.provider.Sort;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.SerializablePredicate;
 import com.vaadin.server.VaadinRequest;
@@ -38,7 +35,7 @@ public class MyUI extends UI {
     private BugrapRepository bugrapRepository;
     private BugrapDesign layout;
     private Set<String> checkedItems = new HashSet<>();
-    private String focusButtonStyle = "focus-button";
+    private String focusItemStyle = "focus-item";
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -54,7 +51,7 @@ public class MyUI extends UI {
         layout.searchBoxLayout.addComponent(searchBox);
 
         //add context menu to custom button
-        ContextMenu contextMenu = new ContextMenu(layout.customButton, true);
+        /*ContextMenu contextMenu = new ContextMenu(layout.customButton, true);
         ContextMenu.Command command = new ContextMenu.Command() {
             public void menuSelected(MenuItem item) {
                 if (item.isChecked()) {
@@ -81,7 +78,7 @@ public class MyUI extends UI {
         worksForMeItem.setCheckable(true);
         MenuItem needMoreInfoItem = contextMenu.addItem("Need more information", null, command);
         needMoreInfoItem.setCheckable(true);
-
+*/
         //set expand ratio for grid columns
         layout.reportGrid.getColumn("version").setExpandRatio(1);
         layout.reportGrid.getColumn("version").setHidden(true);
@@ -109,9 +106,9 @@ public class MyUI extends UI {
         layout.projectComboBox.addValueChangeListener(e -> {
             layout.reportGrid.setItems();
             checkedItems.clear();
-            for (MenuItem item : contextMenu.getItems()) {
+            /*for (MenuItem item : contextMenu.getItems()) {
                 item.setChecked(false);
-            }
+            }*/
             ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(e.getValue()));
             layout.versionNS.setDataProvider(projectVersionLDP);
             if (projectVersionLDP.getItems().size() > 1) {
@@ -130,7 +127,7 @@ public class MyUI extends UI {
         });
 
         //filter with assignee buttons
-        layout.onlyMeButton.addClickListener(e -> {
+        /*layout.onlyMeButton.addClickListener(e -> {
             if (layout.onlyMeButton.getStyleName().equals(focusButtonStyle)) {
                 return;
             }
@@ -148,13 +145,72 @@ public class MyUI extends UI {
             layout.everyoneButton.addStyleName(focusButtonStyle);
             refreshGridData();
         });
-
+*/
         //filter with status buttons
         /*layout.openButton.addClickListener(e -> {
             layout.openButton.setEnabled(false);
             layout.allKindsButton.setEnabled(true);
             layout.customButton.set
         });*/
+
+        MenuBar.Command assigneeCommand = new MenuBar.Command() {
+            MenuBar.MenuItem previous = null;
+
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                if (previous != null) {
+                    previous.setChecked(false);
+                }
+                selectedItem.setCheckable(true);
+                selectedItem.setChecked(true);
+                selectedItem.setStyleName(focusItemStyle);
+                previous = selectedItem;
+            }
+        };
+
+        MenuBar.MenuItem onlyMeItem = layout.assigneeMB.addItem("Only me", assigneeCommand);
+        MenuBar.MenuItem everyoneItem = layout.assigneeMB.addItem("Everyone", assigneeCommand);
+
+        MenuBar.Command statusCommand = new MenuBar.Command() {
+            MenuBar.MenuItem previous = null;
+
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                if (previous != null) {
+                    previous.setChecked(false);
+                }
+                if (!selectedItem.getText().equals("Custom")) {
+                    selectedItem.setChecked(true);
+                }
+                previous = selectedItem;
+            }
+        };
+
+        MenuBar.MenuItem openItem = layout.statusMB.addItem("Open", statusCommand);
+        openItem.setCheckable(true);
+        MenuBar.MenuItem allKindsItem = layout.statusMB.addItem("All kinds", statusCommand);
+        allKindsItem.setCheckable(true);
+        MenuBar.MenuItem customItem = layout.statusMB.addItem("Custom", null);
+
+        MenuBar.Command customCommand = new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                if (selectedItem.getIcon() == VaadinIcons.CHECK_SQUARE)
+                    selectedItem.setIcon(VaadinIcons.THIN_SQUARE);
+                else
+                    selectedItem.setIcon(VaadinIcons.CHECK_SQUARE);
+                for (MenuBar.MenuItem item : layout.statusMB.getItems()) {
+                    if (!item.getText().equals("Custom")) {
+                        item.setChecked(false);
+                    }
+                }
+            }
+        };
+
+        MenuBar.MenuItem openSubItem = customItem.addItem("Open", VaadinIcons.THIN_SQUARE, customCommand);
+        customItem.addSeparator();
+        MenuBar.MenuItem fixedSubItem = customItem.addItem("Fixed", VaadinIcons.THIN_SQUARE, customCommand);
+
 
         setContent(layout);
     }
@@ -176,7 +232,17 @@ public class MyUI extends UI {
         reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
 
         //filter the reports if only me button is click
-        if (layout.onlyMeButton.getStyleName().equals(focusButtonStyle)) {
+        boolean isFiltered = false;
+        SerializablePredicate<Report> reportSP = new SerializablePredicate<Report>() {
+            @Override
+            public boolean test(Report report) {
+                if (report.getAssigned() != null)
+                    if (report.getAssigned().getName().equals(layout.userName.getValue()))
+                        return true;
+                return false;
+            }
+        };
+        /*if (layout.onlyMeButton.getStyleName().equals(focusItemStyle)) {
             SerializablePredicate<Report> reportSP = new SerializablePredicate<Report>() {
                 @Override
                 public boolean test(Report report) {
@@ -188,6 +254,7 @@ public class MyUI extends UI {
             };
             reportLDP.setFilter(reportSP);
         }
+        */
 
         layout.reportGrid.setDataProvider(reportLDP);
     }

@@ -41,7 +41,7 @@ $v-font-color: $color-one;
 $v-app-background-color: #fff;
 $v-background-color: $color-five;
 $v-focus-color: $color-three;
-$v-focus-style: 0 0 0 1px $v-focus-color;
+$v-focus-style: none;
 $valo-menu-background-color: darken($v-focus-color, 10%);
 $v-border: 0 solid v-shade;
 $v-border-radius: 0px;
@@ -78,6 +78,27 @@ $v-border-radius: 10px;
     min-width: 100px;
   }
 
+  .v-menubar:focus {
+    outline: none;
+  }
+
+  .v-menubar-menuitem:focus {
+    outline: none;
+  }
+
+  .v-menubar > .v-menubar-menuitem-checked {
+    background: $color-three;
+    color: white;
+  }
+
+  .v-caption > .v-icon {
+    padding-right: 5px;
+  }
+
+  .v-menubar-popup .v-menubar-menuitem {
+    padding-left: 15px;
+  }
+
   #projectCountLabel{
     background-color: $color-one;
     padding: 0 10px;
@@ -85,7 +106,7 @@ $v-border-radius: 10px;
     color: white;
   }
 
-  .focus-button {
+  .focus-item {
     background: $color-three;
     color: white;
   }
