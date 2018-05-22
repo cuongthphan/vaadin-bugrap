@@ -252,6 +252,9 @@ public class MyUI extends UI {
             }
             else if (topLayout.reportGrid.getSelectedItems().size() > 1) {
                 //mass modification mode
+                MassModificationModeView secondLayout = new MassModificationModeView();
+                mainLayout.setSecondComponent(secondLayout);
+                mainLayout.setSplitPosition(160, Unit.PIXELS, true);
             }
             else {
                 mainLayout.setSecondComponent(null);

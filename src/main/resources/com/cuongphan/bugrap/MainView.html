@@ -70,31 +70,33 @@
      <vaadin-menu-bar _id="statusMB"></vaadin-menu-bar>
     </vaadin-horizontal-layout>
    </vaadin-horizontal-layout>
-   <vaadin-grid width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" selection-mode="multi" _id="reportGrid" :expand>
-    <table>
-     <colgroup>
-      <col column-id="version" sortable>
-      <col column-id="priority" sortable>
-      <col column-id="type" sortable>
-      <col column-id="summary" sortable>
-      <col column-id="assigned" sortable>
-      <col column-id="timestamp" sortable>
-      <col column-id="reportedTimestamp" sortable>
-     </colgroup>
-     <thead>
-      <tr default>
-       <th plain-text column-ids="version">VERSION</th>
-       <th plain-text column-ids="priority">PRIORITY</th>
-       <th plain-text column-ids="type">TYPE</th>
-       <th plain-text column-ids="summary">SUMMARY</th>
-       <th plain-text column-ids="assigned">ASSIGNED</th>
-       <th plain-text column-ids="timestamp">LAST MODIFIED</th>
-       <th plain-text column-ids="reportedTimestamp">REPORTED</th>
-      </tr>
-     </thead>
-     <tbody></tbody>
-    </table>
-   </vaadin-grid>
+   <vaadin-horizontal-layout size-full :expand>
+    <vaadin-grid width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" selection-mode="multi" _id="reportGrid">
+     <table>
+      <colgroup>
+       <col column-id="version" sortable>
+       <col column-id="priority" sortable>
+       <col column-id="type" sortable>
+       <col column-id="summary" sortable>
+       <col column-id="assigned" sortable>
+       <col column-id="timestamp" sortable>
+       <col column-id="reportedTimestamp" sortable>
+      </colgroup>
+      <thead>
+       <tr default>
+        <th plain-text column-ids="version">VERSION</th>
+        <th plain-text column-ids="priority">PRIORITY</th>
+        <th plain-text column-ids="type">TYPE</th>
+        <th plain-text column-ids="summary">SUMMARY</th>
+        <th plain-text column-ids="assigned">ASSIGNED</th>
+        <th plain-text column-ids="timestamp">LAST MODIFIED</th>
+        <th plain-text column-ids="reportedTimestamp">REPORTED</th>
+       </tr>
+      </thead>
+      <tbody></tbody>
+     </table>
+    </vaadin-grid>
+   </vaadin-horizontal-layout>
   </vaadin-vertical-layout>
  </body>
 </html>
