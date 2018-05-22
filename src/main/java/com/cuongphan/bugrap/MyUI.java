@@ -1,25 +1,22 @@
 package com.cuongphan.bugrap;
 
-import javax.servlet.annotation.WebServlet;
-
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.SerializablePredicate;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.ui.*;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
 import org.vaadin.addons.searchbox.SearchBox;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 
-import java.awt.*;
+import javax.servlet.annotation.WebServlet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,35 +61,6 @@ public class MyUI extends UI {
 
         layout.searchBoxLayout.addComponent(searchBox);
 
-        //add context menu to custom button
-        /*ContextMenu contextMenu = new ContextMenu(layout.customButton, true);
-        ContextMenu.Command command = new ContextMenu.Command() {
-            public void menuSelected(MenuItem item) {
-                if (item.isChecked()) {
-                    checkedItems.add(item.getText());
-                } else {
-                    checkedItems.remove(item.getText());
-                }
-            }
-        };
-        MenuItem openItem = contextMenu.addItem("Open", null, command);
-        openItem.setCheckable(true);
-        contextMenu.addSeparator();
-        MenuItem fixedItem = contextMenu.addItem("Fixed", null, command);
-        fixedItem.setCheckable(true);
-        MenuItem invalidItem = contextMenu.addItem("Invalid", null, command);
-        invalidItem.setCheckable(true);
-        MenuItem wontFixItem = contextMenu.addItem("Won't fix", null, command);
-        wontFixItem.setCheckable(true);
-        MenuItem cantFixItem = contextMenu.addItem("Can't fix", null, command);
-        cantFixItem.setCheckable(true);
-        MenuItem duplicateItem = contextMenu.addItem("Duplicate", null, command);
-        duplicateItem.setCheckable(true);
-        MenuItem worksForMeItem = contextMenu.addItem("Works for me", null, command);
-        worksForMeItem.setCheckable(true);
-        MenuItem needMoreInfoItem = contextMenu.addItem("Need more information", null, command);
-        needMoreInfoItem.setCheckable(true);
-*/
         //set expand ratio for grid columns
         layout.reportGrid.getColumn("version").setExpandRatio(1);
         layout.reportGrid.getColumn("version").setHidden(true);
@@ -120,18 +88,21 @@ public class MyUI extends UI {
         layout.projectComboBox.addValueChangeListener(e -> {
             layout.reportGrid.setItems();
             checkedItems.clear();
-            /*for (MenuItem item : contextMenu.getItems()) {
-                item.setChecked(false);
-            }*/
+
             ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(e.getValue()));
-            layout.versionNS.setDataProvider(projectVersionLDP);
-            if (projectVersionLDP.getItems().size() > 1) {
+
+            if (projectVersionLDP.getItems().size() != 1) {
+                layout.versionNS.setDataProvider(projectVersionLDP);
                 layout.versionNS.setEmptySelectionCaption("All versions");
             } else {
                 layout.versionNS.setEmptySelectionAllowed(false);
+                for (ProjectVersion pv : projectVersionLDP.getItems()) {
+                    layout.versionNS.setData(pv);
+                }
             }
 
             layout.versionNS.setValue(null);
+            refreshGridData();
         });
 
         layout.versionNS.addValueChangeListener(e -> {
@@ -140,33 +111,6 @@ public class MyUI extends UI {
                     refreshGridData();
             }
         });
-
-        //filter with assignee buttons
-        /*layout.onlyMeButton.addClickListener(e -> {
-            if (layout.onlyMeButton.getStyleName().equals(focusButtonStyle)) {
-                return;
-            }
-
-            layout.onlyMeButton.addStyleName(focusButtonStyle);
-            layout.everyoneButton.removeStyleName(focusButtonStyle);
-            refreshGridData();
-        });
-
-        layout.everyoneButton.addClickListener(e -> {
-            if (layout.everyoneButton.getStyleName().equals(focusButtonStyle)) {
-                return;
-            }
-            layout.onlyMeButton.removeStyleName(focusButtonStyle);
-            layout.everyoneButton.addStyleName(focusButtonStyle);
-            refreshGridData();
-        });
-*/
-        //filter with status buttons
-        /*layout.openButton.addClickListener(e -> {
-            layout.openButton.setEnabled(false);
-            layout.allKindsButton.setEnabled(true);
-            layout.customButton.set
-        });*/
 
         MenuBar.Command assigneeCommand = new MenuBar.Command() {
             MenuBar.MenuItem previous = null;
@@ -281,19 +225,6 @@ public class MyUI extends UI {
         } else if (!checkedItems.isEmpty()) {
             reportLDP.addFilter(report -> report.getStatus() != null && checkedItems.contains(report.getStatus().toString()));
         }
-        /*if (layout.onlyMeButton.getStyleName().equals(focusItemStyle)) {
-            SerializablePredicate<Report> reportSP = new SerializablePredicate<Report>() {
-                @Override
-                public boolean test(Report report) {
-                    if (report.getAssigned() != null)
-                        if (report.getAssigned().getName().equals(layout.userName.getValue()))
-                            return true;
-                    return false;
-                }
-            };
-            reportLDP.setFilter(reportSP);
-        }
-        */
 
         layout.reportGrid.setDataProvider(reportLDP);
     }
