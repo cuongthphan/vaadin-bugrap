@@ -14562,7 +14562,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-verticallayout {
-	padding: 15px 20px;
+	padding: 10px 20px;
 }
 
 .mytheme .v-textarea {
@@ -14579,8 +14579,9 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0;
 }
 
-.mytheme #vertical-layout-wrapper .v-verticallayout {
+.mytheme #report-header {
 	border-top: solid 1px #05386B;
+	padding: 5px 20px;
 	background: #F6FAF0;
 }
 
@@ -14599,6 +14600,10 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0 10px;
 	border-radius: 100%;
 	color: white;
+}
+
+.mytheme #mainview-header {
+	border-bottom: solid 1px #05386B;
 }
 
 .mytheme .focus-item {

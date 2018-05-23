@@ -312,7 +312,7 @@ public class MyUI extends UI {
 
 
             mainLayout.setSecondComponent(bottomView);
-            mainLayout.setSplitPosition(65, Unit.PERCENTAGE);
+            mainLayout.setSplitPosition(60, Unit.PERCENTAGE);
             mainLayout.setLocked(false);
         }
         // more than 1 reported chosen

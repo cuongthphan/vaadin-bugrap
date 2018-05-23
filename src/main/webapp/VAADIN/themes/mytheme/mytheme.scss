@@ -106,7 +106,7 @@ $v-border-radius: 10px;
   }
 
   .v-verticallayout {
-    padding: 15px 20px;
+    padding: 10px 20px;
   }
 
   .v-textarea {
@@ -123,8 +123,9 @@ $v-border-radius: 10px;
     padding: 0;
   }
 
-  #vertical-layout-wrapper .v-verticallayout {
+  #report-header {
     border-top: solid 1px $color-one ;
+    padding: 5px 20px;
     background: $color-six;
   }
 
@@ -143,6 +144,10 @@ $v-border-radius: 10px;
     padding: 0 10px;
     border-radius: 100%;
     color: white;
+  }
+
+  #mainview-header {
+    border-bottom: solid 1px $color-one ;
   }
 
   .focus-item {
