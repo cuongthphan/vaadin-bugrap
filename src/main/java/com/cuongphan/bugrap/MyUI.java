@@ -206,55 +206,80 @@ public class MyUI extends UI {
 
         topLayout.reportGrid.setSelectionMode(Grid.SelectionMode.MULTI);
         topLayout.reportGrid.addSelectionListener(event -> {
-            if (topLayout.reportGrid.getSelectedItems().size() == 1) {
-                ReportView secondLayout = new ReportView();
+            if (topLayout.reportGrid.getSelectedItems().size() != 0) {
+                ReportView bottomLayout = new ReportView();
+                int selectedAmount = topLayout.reportGrid.getSelectedItems().size();
 
                 event.getFirstSelectedItem().ifPresent(report -> {
+                    bottomLayout.reportNameLabel.setValue(report.getSummary());
+
                     ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(report.getProject()));
-                    secondLayout.versionNS.setDataProvider(projectVersionLDP);
-                    secondLayout.versionNS.setEmptySelectionAllowed(false);
-                    secondLayout.versionNS.setValue(report.getVersion());
+                    bottomLayout.versionNS.setDataProvider(projectVersionLDP);
+                    bottomLayout.versionNS.setValue(report.getVersion());
 
                     Set<Report.Priority> prioritySet = new HashSet<>();
                     for (Report.Priority priority : Report.Priority.values()) {
                         prioritySet.add(priority);
                     }
                     ListDataProvider<Report.Priority> priorityLDP = new ListDataProvider<>(prioritySet);
-                    secondLayout.priorityNS.setDataProvider(priorityLDP);
-                    secondLayout.priorityNS.setValue(report.getPriority());
-                    secondLayout.priorityNS.setEmptySelectionAllowed(false);
+                    bottomLayout.priorityNS.setDataProvider(priorityLDP);
+                    bottomLayout.priorityNS.setValue(report.getPriority());
 
                     Set<Report.Type> typeSet = new HashSet<>();
                     for (Report.Type type : Report.Type.values()) {
                         typeSet.add(type);
                     }
                     ListDataProvider<Report.Type> typeLDP = new ListDataProvider<>(typeSet);
-                    secondLayout.typeNS.setDataProvider(typeLDP);
-                    secondLayout.typeNS.setValue(report.getType());
-                    secondLayout.typeNS.setEmptySelectionAllowed(false);
+                    bottomLayout.typeNS.setDataProvider(typeLDP);
+                    bottomLayout.typeNS.setValue(report.getType());
 
                     Set<Report.Status> statusSet = new HashSet<>();
                     for (Report.Status status : Report.Status.values()) {
                         statusSet.add(status);
                     }
                     ListDataProvider<Report.Status> statusLDP = new ListDataProvider<>(statusSet);
-                    secondLayout.statusNS.setDataProvider(statusLDP);
-                    secondLayout.statusNS.setValue(report.getStatus());
+                    bottomLayout.statusNS.setDataProvider(statusLDP);
+                    bottomLayout.statusNS.setValue(report.getStatus());
 
                     ListDataProvider<Reporter> reporterLDP = new ListDataProvider<>(bugrapRepository.findReporters());
-                    secondLayout.assignedNS.setDataProvider(reporterLDP);
-                    secondLayout.assignedNS.setValue(report.getAssigned());
+                    bottomLayout.assignedNS.setDataProvider(reporterLDP);
+                    bottomLayout.assignedNS.setValue(report.getAssigned());
 
-                    secondLayout.reportDetail.setValue(report.getDescription());
+                    bottomLayout.reportDetail.setValue(report.getDescription());
                 });
-                mainLayout.setSecondComponent(secondLayout);
-                mainLayout.setSplitPosition(65, Unit.PERCENTAGE);
-            }
-            else if (topLayout.reportGrid.getSelectedItems().size() > 1) {
-                //mass modification mode
-                MassModificationModeView secondLayout = new MassModificationModeView();
-                mainLayout.setSecondComponent(secondLayout);
-                mainLayout.setSplitPosition(160, Unit.PIXELS, true);
+                if (selectedAmount == 1) {
+                    bottomLayout.versionNS.setEmptySelectionAllowed(false);
+                    bottomLayout.priorityNS.setEmptySelectionAllowed(false);
+                    bottomLayout.typeNS.setEmptySelectionAllowed(false);
+
+                    mainLayout.setSecondComponent(bottomLayout);
+                    mainLayout.setSplitPosition(65, Unit.PERCENTAGE);
+                }
+                else {
+                    bottomLayout.openNewButton.setVisible(false);
+                    bottomLayout.reportDetail.setVisible(false);
+                    bottomLayout.reportNameLabel.setValue(selectedAmount + " reported selected - Select a single report to view contents");
+
+                    for (Report report : topLayout.reportGrid.getSelectedItems()) {
+                        if (bottomLayout.priorityNS.getValue() != report.getPriority()) {
+                            bottomLayout.priorityNS.setValue(null);
+                        }
+                        if (bottomLayout.typeNS.getValue() != report.getType()) {
+                            bottomLayout.typeNS.setValue(null);
+                        }
+                        if (bottomLayout.statusNS.getValue() != report.getStatus()) {
+                            bottomLayout.statusNS.setValue(null);
+                        }
+                        if (bottomLayout.assignedNS.getValue() != report.getAssigned()) {
+                            bottomLayout.assignedNS.setValue(null);
+                        }
+                        if (bottomLayout.versionNS.getValue() != report.getVersion()) {
+                            bottomLayout.versionNS.setValue(null);
+                        }
+                    }
+                    mainLayout.setSecondComponent(bottomLayout);
+                    mainLayout.setSplitPosition(160, Unit.PIXELS, true);
+                }
             }
             else {
                 mainLayout.setSecondComponent(null);
