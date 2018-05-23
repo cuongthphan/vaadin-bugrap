@@ -33,6 +33,7 @@ $color-two: #279683;
 $color-three: #5CDB95;
 $color-four: #6EE4AF;
 $color-five: #EDF5E1;
+$color-six: #F6FAF0;
 
 $v-app-loading-text: "Loading...";
 
@@ -97,6 +98,44 @@ $v-border-radius: 10px;
 
   .v-menubar-popup .v-menubar-menuitem {
     padding-left: 15px;
+  }
+
+  .v-search-box-wrapper .v-button {
+    border-radius: 10px 0 0 10px;
+    background-color: $color-five !important;
+  }
+
+  .v-verticallayout {
+    padding: 15px 20px;
+  }
+
+  .v-textarea {
+    border-radius: 0 !important;
+    padding: 0 50px 10px 50px;
+    border: none;
+  }
+
+  .v-spacing {
+    height: 6px;
+  }
+
+  #vertical-layout-wrapper {
+    padding: 0;
+  }
+
+  #vertical-layout-wrapper .v-verticallayout {
+    border-top: solid 1px $color-one ;
+    background: $color-six;
+  }
+
+  #link-report-button {
+    height: auto;
+    width: auto;
+    background-color: transparent;
+  }
+
+  #link-report-button:hover {
+    background-color: $color-five;
   }
 
   #projectCountLabel{

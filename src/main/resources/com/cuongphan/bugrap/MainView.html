@@ -26,35 +26,34 @@
      </vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
    </vaadin-horizontal-layout>
+   <vaadin-horizontal-layout width-full>
+    <vaadin-css-layout :middle>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e68a" plain-text _id="bugLabel">
+       Report a bug 
+     </vaadin-label>
+    </vaadin-css-layout>
+    <vaadin-css-layout :middle>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e6ae" plain-text _id="requestAFeature">
+       Request a feature 
+     </vaadin-label>
+    </vaadin-css-layout>
+    <vaadin-css-layout :middle>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e764" width="101px" plain-text _id="manageLabel">
+       Manage reports 
+     </vaadin-label>
+    </vaadin-css-layout>
+    <vaadin-css-layout :middle>
+     <vaadin-label plain-text _id="projectCountLable">
+       123 
+     </vaadin-label>
+    </vaadin-css-layout>
+    <vaadin-horizontal-layout width="70%" _id="searchBoxLayout" :middle :right :expand></vaadin-horizontal-layout>
+   </vaadin-horizontal-layout>
    <vaadin-horizontal-layout>
     <vaadin-label plain-text :middle>
       Reports for 
     </vaadin-label>
     <vaadin-native-select height-full data-item-type="org.vaadin.bugrap.domain.entities.ProjectVersion" _id="versionNS"></vaadin-native-select>
-   </vaadin-horizontal-layout>
-   <vaadin-horizontal-layout width-full>
-    <vaadin-horizontal-layout :middle>
-     <vaadin-css-layout :middle>
-      <vaadin-label icon="fonticon://Vaadin-Icons/e68a" plain-text _id="bugLabel">
-        Report a bug 
-      </vaadin-label>
-     </vaadin-css-layout>
-     <vaadin-css-layout :middle>
-      <vaadin-label icon="fonticon://Vaadin-Icons/e6ae" plain-text _id="requestAFeature">
-        Request a feature 
-      </vaadin-label>
-     </vaadin-css-layout>
-     <vaadin-css-layout :middle :center>
-      <vaadin-label icon="fonticon://Vaadin-Icons/e764" plain-text _id="manageLabel">
-        Manage reports 
-      </vaadin-label>
-     </vaadin-css-layout>
-     <vaadin-label plain-text _id="projectCountLable" :center>
-       123 
-     </vaadin-label>
-     <vaadin-css-layout :middle></vaadin-css-layout>
-    </vaadin-horizontal-layout>
-    <vaadin-horizontal-layout width="80%" _id="searchBoxLayout" :middle :right></vaadin-horizontal-layout>
    </vaadin-horizontal-layout>
    <vaadin-horizontal-layout _id="filterLayout">
     <vaadin-horizontal-layout _id="assigneeLayout">
@@ -71,7 +70,7 @@
     </vaadin-horizontal-layout>
    </vaadin-horizontal-layout>
    <vaadin-horizontal-layout size-full :expand>
-    <vaadin-grid width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" selection-mode="multi" _id="reportGrid">
+    <vaadin-grid height-mode="row" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" selection-mode="multi" _id="reportGrid" :expand>
      <table>
       <colgroup>
        <col column-id="version" sortable>

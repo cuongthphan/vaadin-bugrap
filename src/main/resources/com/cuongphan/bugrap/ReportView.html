@@ -6,29 +6,29 @@
   <meta name="vaadin-version" content="8.1.5">
  </head>
  <body>
-  <vaadin-vertical-layout>
-   <vaadin-horizontal-layout>
-    <vaadin-button icon="fonticon://Vaadin-Icons/e7de" plain-text _id="openNewButton"></vaadin-button>
-    <vaadin-label plain-text _id="reportNameLabel" :middle>
-      Report name 
-    </vaadin-label>
-   </vaadin-horizontal-layout>
-   <vaadin-horizontal-layout width="80%">
-    <vaadin-native-select caption="PRIORITY" data-item-type="org.vaadin.bugrap.domain.entities.Report.Priority" _id="priorityNS" :middle :expand="0.8"></vaadin-native-select>
-    <vaadin-native-select caption="TYPE" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report.Type" _id="typeNS" :middle :expand></vaadin-native-select>
-    <vaadin-native-select caption="STATUS" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report.Status" _id="statusNS" :middle :expand="1.2"></vaadin-native-select>
-    <vaadin-native-select caption="ASSIGNED TO" width-full data-item-type="org.vaadin.bugrap.domain.entities.Reporter" _id="assignedNS" :middle :expand="1.8"></vaadin-native-select>
-    <vaadin-native-select caption="VERSION" width-full data-item-type="org.vaadin.bugrap.domain.entities.ProjectVersion" _id="versionNS" :middle :expand="1.2"></vaadin-native-select>
-    <vaadin-button plain-text _id="updateButton" :bottom :center>
-      Update 
-    </vaadin-button>
-    <vaadin-button plain-text _id="revertButton" :bottom :center>
-      Revert 
-    </vaadin-button>
-   </vaadin-horizontal-layout>
-   <vaadin-horizontal-layout width-full>
-    <vaadin-text-area rows="10" width-full _id="reportDetail"></vaadin-text-area>
-   </vaadin-horizontal-layout>
+  <vaadin-vertical-layout id="vertical-layout-wrapper">
+   <vaadin-vertical-layout>
+    <vaadin-horizontal-layout>
+     <vaadin-button icon="fonticon://Vaadin-Icons/e7de" id="link-report-button" plain-text _id="openNewButton"></vaadin-button>
+     <vaadin-label plain-text _id="reportNameLabel" :middle>
+       Report name 
+     </vaadin-label>
+    </vaadin-horizontal-layout>
+    <vaadin-horizontal-layout width="80%">
+     <vaadin-native-select caption="PRIORITY" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report.Priority" _id="priorityNS" :middle :expand="0.8"></vaadin-native-select>
+     <vaadin-native-select caption="TYPE" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report.Type" _id="typeNS" :middle :expand></vaadin-native-select>
+     <vaadin-native-select caption="STATUS" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report.Status" _id="statusNS" :middle :expand="1.2"></vaadin-native-select>
+     <vaadin-native-select caption="ASSIGNED TO" width-full data-item-type="org.vaadin.bugrap.domain.entities.Reporter" _id="assignedNS" :middle :expand="1.8"></vaadin-native-select>
+     <vaadin-native-select caption="VERSION" width-full data-item-type="org.vaadin.bugrap.domain.entities.ProjectVersion" _id="versionNS" :middle :expand="1.2"></vaadin-native-select>
+     <vaadin-button plain-text _id="updateButton" :bottom :center>
+       Update 
+     </vaadin-button>
+     <vaadin-button plain-text _id="revertButton" :bottom :center>
+       Revert 
+     </vaadin-button>
+    </vaadin-horizontal-layout>
+   </vaadin-vertical-layout>
+   <vaadin-text-area rows="20" size-full _id="reportDetail" :expand></vaadin-text-area>
   </vaadin-vertical-layout>
  </body>
 </html>

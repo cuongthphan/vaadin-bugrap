@@ -307,10 +307,13 @@ public class MyUI extends UI {
             bottomView.versionNS.setEmptySelectionAllowed(false);
             bottomView.priorityNS.setEmptySelectionAllowed(false);
             bottomView.typeNS.setEmptySelectionAllowed(false);
+            bottomView.openNewButton.setVisible(true);
             bottomView.reportDetail.setVisible(true);
+
 
             mainLayout.setSecondComponent(bottomView);
             mainLayout.setSplitPosition(65, Unit.PERCENTAGE);
+            mainLayout.setLocked(false);
         }
         // more than 1 reported chosen
         else {
@@ -340,7 +343,8 @@ public class MyUI extends UI {
                 }
             }
             mainLayout.setSecondComponent(bottomView);
-            mainLayout.setSplitPosition(160, Unit.PIXELS, true);
+            mainLayout.setSplitPosition(110, Unit.PIXELS, true);
+            mainLayout.setLocked(true);
         }
     }
 

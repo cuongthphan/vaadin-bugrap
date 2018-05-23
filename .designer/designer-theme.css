@@ -14556,6 +14556,44 @@ div.v-layout.v-horizontal.v-widget {
 	padding-left: 15px;
 }
 
+.mytheme .v-search-box-wrapper .v-button {
+	border-radius: 10px 0 0 10px;
+	background-color: #EDF5E1 !important;
+}
+
+.mytheme .v-verticallayout {
+	padding: 15px 20px;
+}
+
+.mytheme .v-textarea {
+	border-radius: 0 !important;
+	padding: 0 50px 10px 50px;
+	border: none;
+}
+
+.mytheme .v-spacing {
+	height: 6px;
+}
+
+.mytheme #vertical-layout-wrapper {
+	padding: 0;
+}
+
+.mytheme #vertical-layout-wrapper .v-verticallayout {
+	border-top: solid 1px #05386B;
+	background: #F6FAF0;
+}
+
+.mytheme #link-report-button {
+	height: auto;
+	width: auto;
+	background-color: transparent;
+}
+
+.mytheme #link-report-button:hover {
+	background-color: #EDF5E1;
+}
+
 .mytheme #projectCountLabel {
 	background-color: #05386B;
 	padding: 0 10px;
