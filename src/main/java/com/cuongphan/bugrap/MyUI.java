@@ -206,8 +206,89 @@ public class MyUI extends UI {
 
         topView.reportGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
-        bottomView = new ReportView();
-        bottomView.updateButton.addClickListener(event2 -> {
+        topView.reportGrid.addSelectionListener(event -> {
+            if (topView.reportGrid.getSelectedItems().size() != 0) {
+                bottomView = new ReportView();
+                bottomView.breadcrumbsLayout.setVisible(false);
+                bottomView.attachmentLayout.setVisible(false);
+
+                //display second view if 1 report is selected
+                if (topView.reportGrid.getSelectedItems().size() == 1) {
+                    bottomView.versionNS.setEmptySelectionAllowed(false);
+                    bottomView.priorityNS.setEmptySelectionAllowed(false);
+                    bottomView.typeNS.setEmptySelectionAllowed(false);
+                    bottomView.openNewButton.setVisible(true);
+                    bottomView.reportDetail.setVisible(true);
+
+                    mainLayout.setSecondComponent(bottomView);
+                    mainLayout.setSplitPosition(60, Unit.PERCENTAGE);
+                    mainLayout.setLocked(false);
+                }
+                // if more than 1 reported chosen
+                else {
+                    bottomView.openNewButton.setVisible(false);
+                    bottomView.reportDetail.setVisible(false);
+                    bottomView.reportNameLabel.setValue(topView.reportGrid.getSelectedItems().size() +
+                            " reported selected - Select a single report to view contents");
+
+                    for (Report report : topView.reportGrid.getSelectedItems()) {
+                        if (bottomView.priorityNS.getValue() != report.getPriority()) {
+                            bottomView.priorityNS.setValue(null);
+                        }
+                        if (bottomView.typeNS.getValue() != report.getType()) {
+                            bottomView.typeNS.setValue(null);
+                        }
+                        if (bottomView.statusNS.getValue() != report.getStatus()) {
+                            bottomView.statusNS.setValue(null);
+                        }
+                        if (bottomView.assignedNS.getValue() != report.getAssigned()) {
+                            bottomView.assignedNS.setValue(null);
+                        }
+                        if (bottomView.versionNS.getValue() != report.getVersion()) {
+                            bottomView.versionNS.setValue(null);
+                        }
+                        if (bottomView.reportDetail.getValue() != report.getDescription()) {
+                            bottomView.reportDetail.setValue("");
+                        }
+                    }
+                    mainLayout.setSecondComponent(bottomView);
+                    mainLayout.setSplitPosition(110, Unit.PIXELS, true);
+                    mainLayout.setLocked(true);
+                }
+                addBottomViewListener();
+                refreshBottomView();
+            }
+            else {
+                mainLayout.setSecondComponent(null);
+                mainLayout.setSplitPosition(100, Unit.PERCENTAGE);
+            }
+        });
+
+        mainLayout.setFirstComponent(topView);
+        mainLayout.setSplitPosition(100, Unit.PERCENTAGE);
+        setContent(mainLayout);
+    }
+
+    private void addBottomViewListener() {
+        bottomView.openNewButton.addClickListener(event -> {
+            Window window = new Window();
+            bottomView.breadcrumbsLayout.setVisible(true);
+            bottomView.openNewButton.setVisible(false);
+            bottomView.attachmentLayout.setVisible(true);
+
+            window.setContent(bottomView);
+            window.setSizeFull();
+            window.setResizable(false);
+            window.addCloseListener(e -> {
+                bottomView.breadcrumbsLayout.setVisible(false);
+                bottomView.openNewButton.setVisible(true);
+                bottomView.attachmentLayout.setVisible(false);
+                mainLayout.setSecondComponent(bottomView);
+            });
+            this.getUI().addWindow(window);
+        });
+
+        bottomView.updateButton.addClickListener(event -> {
             for (Report r : topView.reportGrid.getSelectedItems()) {
                 if (bottomView.priorityNS.getValue() != null) {
                     r.setPriority(bottomView.priorityNS.getValue());
@@ -228,9 +309,11 @@ public class MyUI extends UI {
                     r.setDescription(bottomView.reportDetail.getValue());
                 }
             }
+            topView.reportGrid.getDataProvider().refreshAll();
+            refreshBottomView();
         });
 
-        bottomView.revertButton.addClickListener(event3 -> {
+        bottomView.revertButton.addClickListener(event -> {
             for (Report r : topView.reportGrid.getSelectedItems()) {
                 Report origin = bugrapRepository.getReportById(r.getId());
                 r.setPriority(origin.getPriority());
@@ -240,29 +323,21 @@ public class MyUI extends UI {
                 r.setVersion(origin.getVersion());
                 r.setDescription(origin.getDescription());
             }
+            topView.reportGrid.getDataProvider().refreshAll();
             refreshBottomView();
         });
-
-        topView.reportGrid.addSelectionListener(event -> {
-            if (topView.reportGrid.getSelectedItems().size() != 0) {
-
-                refreshBottomView();
-            }
-            else {
-                mainLayout.setSecondComponent(null);
-                mainLayout.setSplitPosition(100, Unit.PERCENTAGE);
-            }
-
-
-        });
-
-        mainLayout.setFirstComponent(topView);
-        mainLayout.setSplitPosition(100, Unit.PERCENTAGE);
-        setContent(mainLayout);
     }
 
     private void refreshBottomView() {
         for (Report report : topView.reportGrid.getSelectedItems()) {
+            bottomView.projectLabel.setValue(report.getProject().getName());
+            if (report.getVersion() != null) {
+                bottomView.versionLabel.setValue(report.getVersion().getVersion());
+            }
+            else {
+                bottomView.versionLabel.setValue(null);
+            }
+
             bottomView.reportNameLabel.setValue(report.getSummary());
 
             ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(report.getProject()));
@@ -300,51 +375,6 @@ public class MyUI extends UI {
             bottomView.reportDetail.setValue(report.getDescription());
 
             break;
-        }
-
-        //display second view if only 1 report is selected
-        if (topView.reportGrid.getSelectedItems().size() == 1) {
-            bottomView.versionNS.setEmptySelectionAllowed(false);
-            bottomView.priorityNS.setEmptySelectionAllowed(false);
-            bottomView.typeNS.setEmptySelectionAllowed(false);
-            bottomView.openNewButton.setVisible(true);
-            bottomView.reportDetail.setVisible(true);
-
-
-            mainLayout.setSecondComponent(bottomView);
-            mainLayout.setSplitPosition(60, Unit.PERCENTAGE);
-            mainLayout.setLocked(false);
-        }
-        // more than 1 reported chosen
-        else {
-            bottomView.openNewButton.setVisible(false);
-            bottomView.reportDetail.setVisible(false);
-            bottomView.reportNameLabel.setValue(topView.reportGrid.getSelectedItems().size() +
-                    " reported selected - Select a single report to view contents");
-
-            for (Report report : topView.reportGrid.getSelectedItems()) {
-                if (bottomView.priorityNS.getValue() != report.getPriority()) {
-                    bottomView.priorityNS.setValue(null);
-                }
-                if (bottomView.typeNS.getValue() != report.getType()) {
-                    bottomView.typeNS.setValue(null);
-                }
-                if (bottomView.statusNS.getValue() != report.getStatus()) {
-                    bottomView.statusNS.setValue(null);
-                }
-                if (bottomView.assignedNS.getValue() != report.getAssigned()) {
-                    bottomView.assignedNS.setValue(null);
-                }
-                if (bottomView.versionNS.getValue() != report.getVersion()) {
-                    bottomView.versionNS.setValue(null);
-                }
-                if (bottomView.reportDetail.getValue() != report.getDescription()) {
-                    bottomView.reportDetail.setValue("");
-                }
-            }
-            mainLayout.setSecondComponent(bottomView);
-            mainLayout.setSplitPosition(110, Unit.PIXELS, true);
-            mainLayout.setLocked(true);
         }
     }
 

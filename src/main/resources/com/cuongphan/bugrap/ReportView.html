@@ -6,7 +6,18 @@
   <meta name="vaadin-version" content="8.1.5">
  </head>
  <body>
-  <vaadin-vertical-layout id="vertical-layout-wrapper">
+  <vaadin-vertical-layout id="vertical-layout-wrapper" size-full>
+   <vaadin-vertical-layout id="breadcrumbs-layout" _id="breadcrumbsLayout" :middle>
+    <vaadin-css-layout width-full :middle>
+     <vaadin-label plain-text _id="projectLabel">
+       Project name 
+     </vaadin-label>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e6ec" plain-text _id="arrowIconLabel"></vaadin-label>
+     <vaadin-label plain-text _id="versionLabel">
+       Version 
+     </vaadin-label>
+    </vaadin-css-layout>
+   </vaadin-vertical-layout>
    <vaadin-vertical-layout id="report-header">
     <vaadin-horizontal-layout>
      <vaadin-button icon="fonticon://Vaadin-Icons/e7de" id="link-report-button" plain-text _id="openNewButton"></vaadin-button>
@@ -28,7 +39,21 @@
      </vaadin-button>
     </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
-   <vaadin-text-area rows="20" size-full _id="reportDetail" :expand></vaadin-text-area>
+   <vaadin-text-area rows="20" id="report-detail-textarea" size-full _id="reportDetail" :expand></vaadin-text-area>
+   <vaadin-vertical-layout id="attachment-layout" size-full _id="attachmentLayout" :expand>
+    <vaadin-text-area rows="11" placeholder="Write a new comment..." width-full :expand></vaadin-text-area>
+    <vaadin-horizontal-layout :bottom>
+     <vaadin-button plain-text _id="doneButton">
+       Done 
+     </vaadin-button>
+     <vaadin-button plain-text _id="attachmentButton">
+       Attachments... 
+     </vaadin-button>
+     <vaadin-button plain-text _id="cancelButton">
+       Cancel 
+     </vaadin-button>
+    </vaadin-horizontal-layout>
+   </vaadin-vertical-layout>
   </vaadin-vertical-layout>
  </body>
 </html>

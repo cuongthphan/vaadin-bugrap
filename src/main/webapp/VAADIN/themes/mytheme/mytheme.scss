@@ -102,14 +102,19 @@ $v-border-radius: 10px;
 
   .v-search-box-wrapper .v-button {
     border-radius: 10px 0 0 10px;
-    background-color: $color-five !important;
+    background-color: $color-two !important;
+  }
+
+  .v-button {
+    background-color: $color-two;
+    color: #fff;
   }
 
   .v-verticallayout {
     padding: 10px 20px;
   }
 
-  .v-textarea {
+  #report-detail-textarea {
     border-radius: 0 !important;
     padding: 0 50px 10px 50px;
     border: none;
@@ -119,20 +124,31 @@ $v-border-radius: 10px;
     height: 6px;
   }
 
+  .v-textarea {
+    border-radius: 0;
+    border: solid 1px $color-one;
+    margin-top: 10px;
+  }
+
   #vertical-layout-wrapper {
     padding: 0;
   }
 
-  #report-header {
+  #report-header, #attachment-layout {
     border-top: solid 1px $color-one ;
     padding: 5px 20px;
     background: $color-six;
+  }
+
+  #report-header {
+    border-bottom: solid 1px $color-one;
   }
 
   #link-report-button {
     height: auto;
     width: auto;
     background-color: transparent;
+    color: $color-one;
   }
 
   #link-report-button:hover {
@@ -148,6 +164,10 @@ $v-border-radius: 10px;
 
   #mainview-header {
     border-bottom: solid 1px $color-one ;
+  }
+
+  #breadcrumbs-layout {
+    padding: 6px 20px 0 20px;
   }
 
   .focus-item {
