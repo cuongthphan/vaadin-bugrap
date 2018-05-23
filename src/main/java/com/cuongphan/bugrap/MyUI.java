@@ -5,13 +5,11 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.*;
 import org.vaadin.addons.searchbox.SearchBox;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
@@ -19,6 +17,7 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
+import javax.print.attribute.standard.OrientationRequested;
 import javax.servlet.annotation.WebServlet;
 import java.util.HashSet;
 import java.util.Optional;
@@ -36,7 +35,7 @@ import java.util.Set;
 public class MyUI extends UI {
 
     private BugrapRepository bugrapRepository;
-    private MainView topLayout;
+    private MainView topView;
     private Set<String> checkedItems = new HashSet<>();
     private String focusItemStyle = "focus-item";
     private MenuBar.MenuItem everyoneItem;
@@ -53,12 +52,13 @@ public class MyUI extends UI {
     private MenuBar.MenuItem needsMoreInfoSubItem;
     private SearchBox searchBox;
     private VerticalSplitPanel mainLayout;
+    private ReportView bottomView;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         mainLayout = new VerticalSplitPanel();
 
-        topLayout = new MainView();
+        topView = new MainView();
 
         //add search box
         searchBox = new SearchBox(VaadinIcons.SEARCH, SearchBox.ButtonPosition.LEFT);
@@ -71,55 +71,55 @@ public class MyUI extends UI {
         searchBox.setSearchMode(SearchBox.SearchMode.DEBOUNCE);
         searchBox.setDebounceTime(200);
 
-        topLayout.searchBoxLayout.addComponent(searchBox);
+        topView.searchBoxLayout.addComponent(searchBox);
 
         //set expand ratio for grid columns
-        topLayout.reportGrid.getColumn("version").setExpandRatio(1);
-        topLayout.reportGrid.getColumn("version").setHidden(true);
-        topLayout.reportGrid.getColumn("priority").setExpandRatio(1);
-        topLayout.reportGrid.getColumn("type").setExpandRatio(1);
-        topLayout.reportGrid.getColumn("summary").setExpandRatio(8);
-        topLayout.reportGrid.getColumn("assigned").setExpandRatio(1);
-        topLayout.reportGrid.getColumn("timestamp").setExpandRatio(1);
-        topLayout.reportGrid.getColumn("reportedTimestamp").setExpandRatio(1);
+        topView.reportGrid.getColumn("version").setExpandRatio(1);
+        topView.reportGrid.getColumn("version").setHidden(true);
+        topView.reportGrid.getColumn("priority").setExpandRatio(1);
+        topView.reportGrid.getColumn("type").setExpandRatio(1);
+        topView.reportGrid.getColumn("summary").setExpandRatio(8);
+        topView.reportGrid.getColumn("assigned").setExpandRatio(1);
+        topView.reportGrid.getColumn("timestamp").setExpandRatio(1);
+        topView.reportGrid.getColumn("reportedTimestamp").setExpandRatio(1);
 
         //get data
         bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
         bugrapRepository.populateWithTestData();
-        topLayout.projectCountLable.setValue(Integer.toString(bugrapRepository.findProjects().size()));
-        topLayout.projectCountLable.setId("projectCountLabel");
+        topView.projectCountLable.setValue(Integer.toString(bugrapRepository.findProjects().size()));
+        topView.projectCountLable.setId("projectCountLabel");
 
         //add project list data provider to project combo box in ascending order by name
         ListDataProvider<Project> projectLDP = new ListDataProvider<>(bugrapRepository.findProjects());
         projectLDP.setSortOrder(project -> project.getName(), SortDirection.ASCENDING);
-        topLayout.projectComboBox.setDataProvider(projectLDP);
-        topLayout.projectComboBox.setEmptySelectionAllowed(false);
+        topView.projectComboBox.setDataProvider(projectLDP);
+        topView.projectComboBox.setEmptySelectionAllowed(false);
 
         //add version from chosen project to version native select
         //and reset context menu and grid
-        topLayout.projectComboBox.addValueChangeListener(e -> {
-            topLayout.reportGrid.setItems();
+        topView.projectComboBox.addValueChangeListener(e -> {
+            topView.reportGrid.setItems();
             checkedItems.clear();
 
             ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(e.getValue()));
 
             if (projectVersionLDP.getItems().size() != 1) {
-                topLayout.versionNS.setDataProvider(projectVersionLDP);
-                topLayout.versionNS.setEmptySelectionCaption("All versions");
+                topView.versionNS.setDataProvider(projectVersionLDP);
+                topView.versionNS.setEmptySelectionCaption("All versions");
             } else {
-                topLayout.versionNS.setEmptySelectionAllowed(false);
+                topView.versionNS.setEmptySelectionAllowed(false);
                 for (ProjectVersion pv : projectVersionLDP.getItems()) {
-                    topLayout.versionNS.setData(pv);
+                    topView.versionNS.setData(pv);
                 }
             }
 
-            topLayout.versionNS.setValue(null);
+            topView.versionNS.setValue(null);
             refreshGridData();
         });
 
-        topLayout.versionNS.addValueChangeListener(e -> {
+        topView.versionNS.addValueChangeListener(e -> {
             if (e.isUserOriginated()) {
-                if (topLayout.projectComboBox.getValue() != null)
+                if (topView.projectComboBox.getValue() != null)
                     refreshGridData();
             }
         });
@@ -144,8 +144,8 @@ public class MyUI extends UI {
             }
         };
 
-        onlyMeItem = topLayout.assigneeMB.addItem("Only me", assigneeCommand);
-        everyoneItem = topLayout.assigneeMB.addItem("Everyone", assigneeCommand);
+        onlyMeItem = topView.assigneeMB.addItem("Only me", assigneeCommand);
+        everyoneItem = topView.assigneeMB.addItem("Everyone", assigneeCommand);
 
         MenuBar.Command statusCommand = new MenuBar.Command() {
             MenuBar.MenuItem previous = null;
@@ -169,11 +169,11 @@ public class MyUI extends UI {
             }
         };
 
-        openItem = topLayout.statusMB.addItem("Open", statusCommand);
+        openItem = topView.statusMB.addItem("Open", statusCommand);
         openItem.setCheckable(true);
-        allKindsItem = topLayout.statusMB.addItem("All kinds", statusCommand);
+        allKindsItem = topView.statusMB.addItem("All kinds", statusCommand);
         allKindsItem.setCheckable(true);
-        MenuBar.MenuItem customItem = topLayout.statusMB.addItem("Custom", null);
+        MenuBar.MenuItem customItem = topView.statusMB.addItem("Custom", null);
 
         MenuBar.Command customCommand = new MenuBar.Command() {
             @Override
@@ -185,7 +185,7 @@ public class MyUI extends UI {
                     checkedItems.add(selectedItem.getText());
                     selectedItem.setIcon(VaadinIcons.CHECK_SQUARE_O);
                 }
-                for (MenuBar.MenuItem item : topLayout.statusMB.getItems()) {
+                for (MenuBar.MenuItem item : topView.statusMB.getItems()) {
                     if (!item.getText().equals("Custom")) {
                         item.setChecked(false);
                     }
@@ -204,82 +204,49 @@ public class MyUI extends UI {
         worksForMeSubItem = customItem.addItem("Works for me", VaadinIcons.THIN_SQUARE, customCommand);
         needsMoreInfoSubItem = customItem.addItem("Needs more information", VaadinIcons.THIN_SQUARE, customCommand);
 
-        topLayout.reportGrid.setSelectionMode(Grid.SelectionMode.MULTI);
-        topLayout.reportGrid.addSelectionListener(event -> {
-            if (topLayout.reportGrid.getSelectedItems().size() != 0) {
-                ReportView bottomLayout = new ReportView();
-                int selectedAmount = topLayout.reportGrid.getSelectedItems().size();
+        topView.reportGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
-                event.getFirstSelectedItem().ifPresent(report -> {
-                    bottomLayout.reportNameLabel.setValue(report.getSummary());
-
-                    ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(report.getProject()));
-                    bottomLayout.versionNS.setDataProvider(projectVersionLDP);
-                    bottomLayout.versionNS.setValue(report.getVersion());
-
-                    Set<Report.Priority> prioritySet = new HashSet<>();
-                    for (Report.Priority priority : Report.Priority.values()) {
-                        prioritySet.add(priority);
-                    }
-                    ListDataProvider<Report.Priority> priorityLDP = new ListDataProvider<>(prioritySet);
-                    bottomLayout.priorityNS.setDataProvider(priorityLDP);
-                    bottomLayout.priorityNS.setValue(report.getPriority());
-
-                    Set<Report.Type> typeSet = new HashSet<>();
-                    for (Report.Type type : Report.Type.values()) {
-                        typeSet.add(type);
-                    }
-                    ListDataProvider<Report.Type> typeLDP = new ListDataProvider<>(typeSet);
-                    bottomLayout.typeNS.setDataProvider(typeLDP);
-                    bottomLayout.typeNS.setValue(report.getType());
-
-                    Set<Report.Status> statusSet = new HashSet<>();
-                    for (Report.Status status : Report.Status.values()) {
-                        statusSet.add(status);
-                    }
-                    ListDataProvider<Report.Status> statusLDP = new ListDataProvider<>(statusSet);
-                    bottomLayout.statusNS.setDataProvider(statusLDP);
-                    bottomLayout.statusNS.setValue(report.getStatus());
-
-                    ListDataProvider<Reporter> reporterLDP = new ListDataProvider<>(bugrapRepository.findReporters());
-                    bottomLayout.assignedNS.setDataProvider(reporterLDP);
-                    bottomLayout.assignedNS.setValue(report.getAssigned());
-
-                    bottomLayout.reportDetail.setValue(report.getDescription());
-                });
-                if (selectedAmount == 1) {
-                    bottomLayout.versionNS.setEmptySelectionAllowed(false);
-                    bottomLayout.priorityNS.setEmptySelectionAllowed(false);
-                    bottomLayout.typeNS.setEmptySelectionAllowed(false);
-
-                    mainLayout.setSecondComponent(bottomLayout);
-                    mainLayout.setSplitPosition(65, Unit.PERCENTAGE);
+        bottomView = new ReportView();
+        bottomView.updateButton.addClickListener(event2 -> {
+            for (Report r : topView.reportGrid.getSelectedItems()) {
+                if (bottomView.priorityNS.getValue() != null) {
+                    r.setPriority(bottomView.priorityNS.getValue());
                 }
-                else {
-                    bottomLayout.openNewButton.setVisible(false);
-                    bottomLayout.reportDetail.setVisible(false);
-                    bottomLayout.reportNameLabel.setValue(selectedAmount + " reported selected - Select a single report to view contents");
-
-                    for (Report report : topLayout.reportGrid.getSelectedItems()) {
-                        if (bottomLayout.priorityNS.getValue() != report.getPriority()) {
-                            bottomLayout.priorityNS.setValue(null);
-                        }
-                        if (bottomLayout.typeNS.getValue() != report.getType()) {
-                            bottomLayout.typeNS.setValue(null);
-                        }
-                        if (bottomLayout.statusNS.getValue() != report.getStatus()) {
-                            bottomLayout.statusNS.setValue(null);
-                        }
-                        if (bottomLayout.assignedNS.getValue() != report.getAssigned()) {
-                            bottomLayout.assignedNS.setValue(null);
-                        }
-                        if (bottomLayout.versionNS.getValue() != report.getVersion()) {
-                            bottomLayout.versionNS.setValue(null);
-                        }
-                    }
-                    mainLayout.setSecondComponent(bottomLayout);
-                    mainLayout.setSplitPosition(160, Unit.PIXELS, true);
+                if (bottomView.typeNS.getValue() != null) {
+                    r.setType(bottomView.typeNS.getValue());
                 }
+                if (bottomView.statusNS.getValue() != null) {
+                    r.setStatus(bottomView.statusNS.getValue());
+                }
+                if (bottomView.assignedNS.getValue() != null) {
+                    r.setAssigned(bottomView.assignedNS.getValue());
+                }
+                if (bottomView.versionNS.getValue() != null) {
+                    r.setVersion(bottomView.versionNS.getValue());
+                }
+                if (bottomView.reportDetail.getValue() != null) {
+                    r.setDescription(bottomView.reportDetail.getValue());
+                }
+            }
+        });
+
+        bottomView.revertButton.addClickListener(event3 -> {
+            for (Report r : topView.reportGrid.getSelectedItems()) {
+                Report origin = bugrapRepository.getReportById(r.getId());
+                r.setPriority(origin.getPriority());
+                r.setType(origin.getType());
+                r.setStatus(origin.getStatus());
+                r.setAssigned(origin.getAssigned());
+                r.setVersion(origin.getVersion());
+                r.setDescription(origin.getDescription());
+            }
+            refreshBottomView();
+        });
+
+        topView.reportGrid.addSelectionListener(event -> {
+            if (topView.reportGrid.getSelectedItems().size() != 0) {
+
+                refreshBottomView();
             }
             else {
                 mainLayout.setSecondComponent(null);
@@ -289,33 +256,116 @@ public class MyUI extends UI {
 
         });
 
-        mainLayout.setFirstComponent(topLayout);
+        mainLayout.setFirstComponent(topView);
         mainLayout.setSplitPosition(100, Unit.PERCENTAGE);
         setContent(mainLayout);
     }
 
+    private void refreshBottomView() {
+        for (Report report : topView.reportGrid.getSelectedItems()) {
+            bottomView.reportNameLabel.setValue(report.getSummary());
+
+            ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(report.getProject()));
+            bottomView.versionNS.setDataProvider(projectVersionLDP);
+            bottomView.versionNS.setValue(report.getVersion());
+
+            Set<Report.Priority> prioritySet = new HashSet<>();
+            for (Report.Priority priority : Report.Priority.values()) {
+                prioritySet.add(priority);
+            }
+            ListDataProvider<Report.Priority> priorityLDP = new ListDataProvider<>(prioritySet);
+            bottomView.priorityNS.setDataProvider(priorityLDP);
+            bottomView.priorityNS.setValue(report.getPriority());
+
+            Set<Report.Type> typeSet = new HashSet<>();
+            for (Report.Type type : Report.Type.values()) {
+                typeSet.add(type);
+            }
+            ListDataProvider<Report.Type> typeLDP = new ListDataProvider<>(typeSet);
+            bottomView.typeNS.setDataProvider(typeLDP);
+            bottomView.typeNS.setValue(report.getType());
+
+            Set<Report.Status> statusSet = new HashSet<>();
+            for (Report.Status status : Report.Status.values()) {
+                statusSet.add(status);
+            }
+            ListDataProvider<Report.Status> statusLDP = new ListDataProvider<>(statusSet);
+            bottomView.statusNS.setDataProvider(statusLDP);
+            bottomView.statusNS.setValue(report.getStatus());
+
+            ListDataProvider<Reporter> reporterLDP = new ListDataProvider<>(bugrapRepository.findReporters());
+            bottomView.assignedNS.setDataProvider(reporterLDP);
+            bottomView.assignedNS.setValue(report.getAssigned());
+
+            bottomView.reportDetail.setValue(report.getDescription());
+
+            break;
+        }
+
+        //display second view if only 1 report is selected
+        if (topView.reportGrid.getSelectedItems().size() == 1) {
+            bottomView.versionNS.setEmptySelectionAllowed(false);
+            bottomView.priorityNS.setEmptySelectionAllowed(false);
+            bottomView.typeNS.setEmptySelectionAllowed(false);
+            bottomView.reportDetail.setVisible(true);
+
+            mainLayout.setSecondComponent(bottomView);
+            mainLayout.setSplitPosition(65, Unit.PERCENTAGE);
+        }
+        // more than 1 reported chosen
+        else {
+            bottomView.openNewButton.setVisible(false);
+            bottomView.reportDetail.setVisible(false);
+            bottomView.reportNameLabel.setValue(topView.reportGrid.getSelectedItems().size() +
+                    " reported selected - Select a single report to view contents");
+
+            for (Report report : topView.reportGrid.getSelectedItems()) {
+                if (bottomView.priorityNS.getValue() != report.getPriority()) {
+                    bottomView.priorityNS.setValue(null);
+                }
+                if (bottomView.typeNS.getValue() != report.getType()) {
+                    bottomView.typeNS.setValue(null);
+                }
+                if (bottomView.statusNS.getValue() != report.getStatus()) {
+                    bottomView.statusNS.setValue(null);
+                }
+                if (bottomView.assignedNS.getValue() != report.getAssigned()) {
+                    bottomView.assignedNS.setValue(null);
+                }
+                if (bottomView.versionNS.getValue() != report.getVersion()) {
+                    bottomView.versionNS.setValue(null);
+                }
+                if (bottomView.reportDetail.getValue() != report.getDescription()) {
+                    bottomView.reportDetail.setValue("");
+                }
+            }
+            mainLayout.setSecondComponent(bottomView);
+            mainLayout.setSplitPosition(160, Unit.PIXELS, true);
+        }
+    }
+
     private void refreshGridData() {
         BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
-        query.project = topLayout.projectComboBox.getValue();
+        query.project = topView.projectComboBox.getValue();
         if (query.project == null) {
             return;
         }
 
-        query.projectVersion = topLayout.versionNS.getValue();
+        query.projectVersion = topView.versionNS.getValue();
 
         Set<Report> reports = bugrapRepository.findReports(query);
         ListDataProvider<Report> reportLDP = new ListDataProvider<>(reports);
 
         if (query.projectVersion == null) {
-            topLayout.reportGrid.getColumn("version").setHidden(false);
+            topView.reportGrid.getColumn("version").setHidden(false);
         } else {
-            topLayout.reportGrid.getColumn("version").setHidden(true);
+            topView.reportGrid.getColumn("version").setHidden(true);
         }
         reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
 
         //filter the reports
         if (onlyMeItem.isChecked()) {
-            reportLDP.addFilter(report -> report.getAssigned() != null && report.getAssigned().getName().equals(topLayout.userName.getValue()));
+            reportLDP.addFilter(report -> report.getAssigned() != null && report.getAssigned().getName().equals(topView.userName.getValue()));
         }
 
         if (openItem.isChecked()) {
@@ -331,7 +381,7 @@ public class MyUI extends UI {
                     && report.getSummary().toLowerCase().contains(searchBox.getSearchField().getValue().toLowerCase()));
         }
 
-        topLayout.reportGrid.setDataProvider(reportLDP);
+        topView.reportGrid.setDataProvider(reportLDP);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
