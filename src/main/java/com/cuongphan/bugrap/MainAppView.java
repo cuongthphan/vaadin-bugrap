@@ -1,13 +1,9 @@
 package com.cuongphan.bugrap;
 
-import com.vaadin.annotations.StyleSheet;
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.Sizeable;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.navigator.View;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
 import org.vaadin.addons.searchbox.SearchBox;
@@ -17,23 +13,10 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
-import javax.print.attribute.standard.OrientationRequested;
-import javax.servlet.annotation.WebServlet;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
-/**
- * This UI is the application entry point. A UI may either represent a browser window
- * (or tab) or some part of an HTML page where a Vaadin application is embedded.
- * <p>
- * The UI is initialized using {@link #init(VaadinRequest)}. This method is intended to be
- * overridden to add component to the user interface and initialize non-component functionality.
- */
-@Theme("mytheme")
-@StyleSheet({"https://fonts.googleapis.com/css?family=Roboto"})
-public class MyUI extends UI {
-
+public class MainAppView extends VerticalSplitPanel implements View {
     private BugrapRepository bugrapRepository;
     private MainView topView;
     private Set<String> checkedItems = new HashSet<>();
@@ -51,12 +34,10 @@ public class MyUI extends UI {
     private MenuBar.MenuItem worksForMeSubItem;
     private MenuBar.MenuItem needsMoreInfoSubItem;
     private SearchBox searchBox;
-    private VerticalSplitPanel mainLayout;
     private ReportView bottomView;
 
-    @Override
-    protected void init(VaadinRequest vaadinRequest) {
-        mainLayout = new VerticalSplitPanel();
+    public MainAppView() {
+        setSizeFull();
 
         topView = new MainView();
 
@@ -66,7 +47,6 @@ public class MyUI extends UI {
         searchBox.getSearchField().setPlaceholder("Search reports...");
         searchBox.setSuggestionListSize(5);
         searchBox.setWidth(100, Unit.PERCENTAGE);
-
         searchBox.addSearchListener(event -> refreshGridData());
         searchBox.setSearchMode(SearchBox.SearchMode.DEBOUNCE);
         searchBox.setDebounceTime(200);
@@ -220,9 +200,9 @@ public class MyUI extends UI {
                     bottomView.openNewButton.setVisible(true);
                     bottomView.reportDetail.setVisible(true);
 
-                    mainLayout.setSecondComponent(bottomView);
-                    mainLayout.setSplitPosition(60, Unit.PERCENTAGE);
-                    mainLayout.setLocked(false);
+                    setSecondComponent(bottomView);
+                    setSplitPosition(60, Unit.PERCENTAGE);
+                    setLocked(false);
                 }
                 // if more than 1 reported chosen
                 else {
@@ -251,63 +231,66 @@ public class MyUI extends UI {
                             bottomView.reportDetail.setValue("");
                         }
                     }
-                    mainLayout.setSecondComponent(bottomView);
-                    mainLayout.setSplitPosition(110, Unit.PIXELS, true);
-                    mainLayout.setLocked(true);
+                    setSecondComponent(bottomView);
+                    setSplitPosition(110, Unit.PIXELS, true);
+                    setLocked(true);
                 }
                 addBottomViewListener();
                 refreshBottomView();
             }
             else {
-                mainLayout.setSecondComponent(null);
-                mainLayout.setSplitPosition(100, Unit.PERCENTAGE);
+                setSecondComponent(null);
+                setSplitPosition(100, Unit.PERCENTAGE);
             }
         });
 
-        mainLayout.setFirstComponent(topView);
-        mainLayout.setSplitPosition(100, Unit.PERCENTAGE);
-        setContent(mainLayout);
+        setFirstComponent(topView);
+        setSplitPosition(100, Unit.PERCENTAGE);
     }
 
-    private void addBottomViewListener() {
-        bottomView.openNewButton.addClickListener(event -> {
-            Window window = new Window();
-            bottomView.breadcrumbsLayout.setVisible(true);
-            bottomView.openNewButton.setVisible(false);
-            bottomView.attachmentLayout.setVisible(true);
 
-            window.setContent(bottomView);
-            window.setSizeFull();
-            window.setResizable(false);
-            window.addCloseListener(e -> {
-                bottomView.breadcrumbsLayout.setVisible(false);
-                bottomView.openNewButton.setVisible(true);
-                bottomView.attachmentLayout.setVisible(false);
-                mainLayout.setSecondComponent(bottomView);
-            });
-            this.getUI().addWindow(window);
+    private void addBottomViewListener() {
+        BrowserWindowOpener opener = new BrowserWindowOpener(ReportUI.class);
+
+        opener.extend(bottomView.openNewButton);
+        opener.setWindowName("Report");
+
+        bottomView.openNewButton.addClickListener(event -> {
+            for (Report report : topView.reportGrid.getSelectedItems()) {
+                ReportSingleton.getInstance().setReport(report);
+            }
+
+            setSplitPosition(100, Unit.PERCENTAGE);
         });
 
         bottomView.updateButton.addClickListener(event -> {
             for (Report r : topView.reportGrid.getSelectedItems()) {
+                Report report = bugrapRepository.getReportById(r.getId());
                 if (bottomView.priorityNS.getValue() != null) {
                     r.setPriority(bottomView.priorityNS.getValue());
+                    report.setPriority(bottomView.priorityNS.getValue());
                 }
                 if (bottomView.typeNS.getValue() != null) {
                     r.setType(bottomView.typeNS.getValue());
+                    report.setType(bottomView.typeNS.getValue());
                 }
                 if (bottomView.statusNS.getValue() != null) {
                     r.setStatus(bottomView.statusNS.getValue());
+                    report.setStatus(bottomView.statusNS.getValue());
                 }
                 if (bottomView.assignedNS.getValue() != null) {
                     r.setAssigned(bottomView.assignedNS.getValue());
+                    report.setAssigned(bottomView.assignedNS.getValue());
                 }
                 if (bottomView.versionNS.getValue() != null) {
                     r.setVersion(bottomView.versionNS.getValue());
+                    report.setVersion(bottomView.versionNS.getValue());
                 }
                 if (bottomView.reportDetail.getValue() != null) {
                     r.setDescription(bottomView.reportDetail.getValue());
+                    report.setDescription(bottomView.reportDetail.getValue());
                 }
+                bugrapRepository.save(report);
             }
             topView.reportGrid.getDataProvider().refreshAll();
             refreshBottomView();
@@ -338,7 +321,9 @@ public class MyUI extends UI {
                 bottomView.versionLabel.setValue(null);
             }
 
-            bottomView.reportNameLabel.setValue(report.getSummary());
+            if (topView.reportGrid.getSelectedItems().size() == 1) {
+                bottomView.reportNameLabel.setValue(report.getSummary());
+            }
 
             ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(report.getProject()));
             bottomView.versionNS.setDataProvider(projectVersionLDP);
@@ -418,8 +403,4 @@ public class MyUI extends UI {
         topView.reportGrid.setDataProvider(reportLDP);
     }
 
-    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-    @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
-    public static class MyUIServlet extends VaadinServlet {
-    }
 }
