@@ -14558,19 +14558,14 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-search-box-wrapper .v-button {
 	border-radius: 10px 0 0 10px;
-	background-color: #279683 !important;
-}
-
-.mytheme .v-button {
-	background-color: #279683;
-	color: #fff;
+	background-color: #EDF5E1 !important;
 }
 
 .mytheme .v-verticallayout {
 	padding: 10px 20px;
 }
 
-.mytheme #report-detail-textarea {
+.mytheme .v-textarea {
 	border-radius: 0 !important;
 	padding: 0 50px 10px 50px;
 	border: none;
@@ -14580,31 +14575,20 @@ div.v-layout.v-horizontal.v-widget {
 	height: 6px;
 }
 
-.mytheme .v-textarea {
-	border-radius: 0;
-	border: solid 1px #05386B;
-	margin-top: 10px;
-}
-
 .mytheme #vertical-layout-wrapper {
 	padding: 0;
 }
 
-.mytheme #report-header, .mytheme #attachment-layout {
+.mytheme #report-header {
 	border-top: solid 1px #05386B;
 	padding: 5px 20px;
 	background: #F6FAF0;
-}
-
-.mytheme #report-header {
-	border-bottom: solid 1px #05386B;
 }
 
 .mytheme #link-report-button {
 	height: auto;
 	width: auto;
 	background-color: transparent;
-	color: #05386B;
 }
 
 .mytheme #link-report-button:hover {
@@ -14620,10 +14604,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme #mainview-header {
 	border-bottom: solid 1px #05386B;
-}
-
-.mytheme #breadcrumbs-layout {
-	padding: 6px 20px 0 20px;
 }
 
 .mytheme .focus-item {
