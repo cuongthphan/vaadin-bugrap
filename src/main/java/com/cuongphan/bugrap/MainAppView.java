@@ -1,5 +1,6 @@
 package com.cuongphan.bugrap;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -16,7 +17,7 @@ import org.vaadin.bugrap.domain.entities.Reporter;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MainAppView extends VerticalSplitPanel implements View {
+public class MainAppView extends VerticalSplitPanel implements View, Broadcaster.BroadcastListener {
     private BugrapRepository bugrapRepository;
     private MainView topView;
     private Set<String> checkedItems = new HashSet<>();
@@ -232,7 +233,7 @@ public class MainAppView extends VerticalSplitPanel implements View {
                         }
                     }
                     setSecondComponent(bottomView);
-                    setSplitPosition(110, Unit.PIXELS, true);
+                    setSplitPosition(90, Unit.PIXELS, true);
                     setLocked(true);
                 }
                 addBottomViewListener();
@@ -259,8 +260,6 @@ public class MainAppView extends VerticalSplitPanel implements View {
             for (Report report : topView.reportGrid.getSelectedItems()) {
                 ReportSingleton.getInstance().setReport(report);
             }
-
-            setSplitPosition(100, Unit.PERCENTAGE);
         });
 
         bottomView.updateButton.addClickListener(event -> {
@@ -403,4 +402,20 @@ public class MainAppView extends VerticalSplitPanel implements View {
         topView.reportGrid.setDataProvider(reportLDP);
     }
 
+    @Override
+    public void receiveBroadcast(String message) {
+        getUI().access(new Runnable() {
+            @Override
+            public void run() {
+                refreshGridData();
+                refreshBottomView();
+            }
+        });
+    }
+
+    @Override
+    public void detach() {
+        Broadcaster.unregister(this);
+        super.detach();
+    }
 }

@@ -24,6 +24,9 @@ public class ReportUI extends UI {
     protected void init(VaadinRequest request) {
         bugrapRepository.populateWithTestData();
 
+        reportView.statusNS.setEmptySelectionAllowed(false);
+        reportView.assignedNS.setEmptySelectionAllowed(false);
+
         reportView.openNewButton.setVisible(false);
         Report report = ReportSingleton.getInstance().getReport();
 
@@ -90,8 +93,7 @@ public class ReportUI extends UI {
             bugrapRepository.save(report);
             ReportSingleton.getInstance().setReport(report);
 
-            Notification.show(bugrapRepository.getReportById(report.getId()).getAssigned().getName() + "\n"
-                + report.getAssigned().getName());
+            Broadcaster.broadcast("Update button clicked");
         });
 
         reportView.revertButton.addClickListener(e -> {
@@ -104,8 +106,6 @@ public class ReportUI extends UI {
             reportView.assignedNS.setValue(report.getAssigned());
             reportView.versionNS.setValue(report.getVersion());
             reportView.reportDetail.setValue(report.getDescription());
-
-            Notification.show(report.getAssigned().getName());
         });
     }
 }

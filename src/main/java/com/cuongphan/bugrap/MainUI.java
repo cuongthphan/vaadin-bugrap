@@ -1,5 +1,6 @@
 package com.cuongphan.bugrap;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -18,12 +19,14 @@ import javax.servlet.annotation.WebServlet;
  */
 @Theme("mytheme")
 @StyleSheet({"https://fonts.googleapis.com/css?family=Roboto"})
+@Push
 public class MainUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         MainAppView mainAppView = new MainAppView();
         setContent(mainAppView);
+        Broadcaster.register(mainAppView);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
