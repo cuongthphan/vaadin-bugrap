@@ -29,11 +29,11 @@ public class MainUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         navigator = new Navigator(this, this);
-        MainAppView mainAppView = new MainAppView();
-        navigator.addView( ViewNames.MAINAPPVIEW, mainAppView);
 
-        navigator.navigateTo(ViewNames.MAINAPPVIEW);
+        MainAppView mainAppView = new MainAppView();
         Broadcaster.register(mainAppView);
+        navigator.addView( ViewNames.MAINAPPVIEW, mainAppView);
+        navigator.addView( ViewNames.FULLREPORTVIEW, new ReportView());
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

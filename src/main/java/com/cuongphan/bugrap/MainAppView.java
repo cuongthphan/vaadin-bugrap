@@ -1,6 +1,5 @@
 package com.cuongphan.bugrap;
 
-import com.vaadin.annotations.Push;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -15,6 +14,8 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class MainAppView extends VerticalSplitPanel implements View, Broadcaster.BroadcastListener {
@@ -41,6 +42,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         setSizeFull();
 
         topView = new MainView();
+
+        setFirstComponent(topView);
+        setSplitPosition(100, Unit.PERCENTAGE);
 
         //add search box
         searchBox = new SearchBox(VaadinIcons.SEARCH, SearchBox.ButtonPosition.LEFT);
@@ -192,6 +196,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                 bottomView = new ReportView();
                 bottomView.breadcrumbsLayout.setVisible(false);
                 bottomView.attachmentLayout.setVisible(false);
+                setSecondComponent(bottomView);
+                setLocked(false);
+                refreshBottomView();
 
                 //display second view if 1 report is selected
                 if (topView.reportGrid.getSelectedItems().size() == 1) {
@@ -201,9 +208,12 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                     bottomView.openNewButton.setVisible(true);
                     bottomView.reportDetail.setVisible(true);
 
-                    setSecondComponent(bottomView);
+                    ReportSingleton.getInstance().getReports().clear();
+                    for (Report report : topView.reportGrid.getSelectedItems()) {
+                        ReportSingleton.getInstance().addReport(report);
+                    }
+
                     setSplitPosition(60, Unit.PERCENTAGE);
-                    setLocked(false);
                 }
                 // if more than 1 reported chosen
                 else {
@@ -212,55 +222,32 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                     bottomView.reportNameLabel.setValue(topView.reportGrid.getSelectedItems().size() +
                             " reported selected - Select a single report to view contents");
 
-                    for (Report report : topView.reportGrid.getSelectedItems()) {
-                        if (bottomView.priorityNS.getValue() != report.getPriority()) {
-                            bottomView.priorityNS.setValue(null);
-                        }
-                        if (bottomView.typeNS.getValue() != report.getType()) {
-                            bottomView.typeNS.setValue(null);
-                        }
-                        if (bottomView.statusNS.getValue() != report.getStatus()) {
-                            bottomView.statusNS.setValue(null);
-                        }
-                        if (bottomView.assignedNS.getValue() != report.getAssigned()) {
-                            bottomView.assignedNS.setValue(null);
-                        }
-                        if (bottomView.versionNS.getValue() != report.getVersion()) {
-                            bottomView.versionNS.setValue(null);
-                        }
-                        if (bottomView.reportDetail.getValue() != report.getDescription()) {
-                            bottomView.reportDetail.setValue("");
-                        }
-                    }
-                    setSecondComponent(bottomView);
+                    refreshBottomView();
                     setSplitPosition(90, Unit.PIXELS, true);
-                    setLocked(true);
                 }
                 addBottomViewListener();
-                refreshBottomView();
             }
             else {
                 setSecondComponent(null);
                 setSplitPosition(100, Unit.PERCENTAGE);
             }
         });
-
-        setFirstComponent(topView);
-        setSplitPosition(100, Unit.PERCENTAGE);
     }
 
-
     private void addBottomViewListener() {
-        BrowserWindowOpener opener = new BrowserWindowOpener(ReportUI.class);
+        BrowserWindowOpener opener = new BrowserWindowOpener(MainUI.class, ViewNames.FULLREPORTVIEW);
 
         opener.extend(bottomView.openNewButton);
         opener.setWindowName("Report");
 
         bottomView.openNewButton.addClickListener(event -> {
             for (Report report : topView.reportGrid.getSelectedItems()) {
-                ReportSingleton.getInstance().setReport(report);
+                ReportSingleton.getInstance().clearReports();
+                ReportSingleton.getInstance().addReport(report);
             }
         });
+
+        bottomView.removeListener();
 
         bottomView.updateButton.addClickListener(event -> {
             for (Report r : topView.reportGrid.getSelectedItems()) {
@@ -285,7 +272,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                     r.setVersion(bottomView.versionNS.getValue());
                     report.setVersion(bottomView.versionNS.getValue());
                 }
-                if (bottomView.reportDetail.getValue() != null) {
+                if (topView.reportGrid.getSelectedItems().size() == 1) {
                     r.setDescription(bottomView.reportDetail.getValue());
                     report.setDescription(bottomView.reportDetail.getValue());
                 }
@@ -360,6 +347,24 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
             break;
         }
+
+        for (Report report : topView.reportGrid.getSelectedItems()) {
+            if (bottomView.priorityNS.getValue() != report.getPriority()) {
+                bottomView.priorityNS.setValue(null);
+            }
+            if (bottomView.typeNS.getValue() != report.getType()) {
+                bottomView.typeNS.setValue(null);
+            }
+            if (bottomView.statusNS.getValue() != report.getStatus()) {
+                bottomView.statusNS.setValue(null);
+            }
+            if (bottomView.assignedNS.getValue() != report.getAssigned()) {
+                bottomView.assignedNS.setValue(null);
+            }
+            if (bottomView.versionNS.getValue() != report.getVersion()) {
+                bottomView.versionNS.setValue(null);
+            }
+        }
     }
 
     private void refreshGridData() {
@@ -404,19 +409,35 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
     @Override
     public void receiveBroadcast(String message) {
-        Report report = ReportSingleton.getInstance().getReport();
+        Report report = ReportSingleton.getInstance().getReports().getFirst();
 
         for (Report r : topView.reportGrid.getSelectedItems()) {
-            r.setDescription(report.getDescription());
-            r.setVersion(report.getVersion());
-            r.setAssigned(report.getAssigned());
-            r.setStatus(report.getStatus());
-            r.setType(report.getType());
-            r.setPriority(report.getPriority());
-            r.setSummary(report.getSummary());
+            if (r.getId() == report.getId()) {
+                r.setDescription(report.getDescription());
+                r.setVersion(report.getVersion());
+                r.setAssigned(report.getAssigned());
+                r.setStatus(report.getStatus());
+                r.setType(report.getType());
+                r.setPriority(report.getPriority());
+                r.setSummary(report.getSummary());
+                break;
+            }
         }
+
+        LinkedList<Report> selectedReports = new LinkedList<>();
+
+        for (Report r : topView.reportGrid.getSelectedItems()) {
+            selectedReports.add(r);
+        }
+
+        refreshGridData();
+
+        for (Report r : selectedReports) {
+            topView.reportGrid.select(r);
+        }
+
         //refreshGridData();
-        topView.reportGrid.getDataProvider().refreshAll();
+        //topView.reportGrid.getDataProvider().refreshAll();
         refreshBottomView();
     }
 
