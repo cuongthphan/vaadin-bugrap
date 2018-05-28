@@ -404,13 +404,20 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
     @Override
     public void receiveBroadcast(String message) {
-        getUI().access(new Runnable() {
-            @Override
-            public void run() {
-                refreshGridData();
-                refreshBottomView();
-            }
-        });
+        Report report = ReportSingleton.getInstance().getReport();
+
+        for (Report r : topView.reportGrid.getSelectedItems()) {
+            r.setDescription(report.getDescription());
+            r.setVersion(report.getVersion());
+            r.setAssigned(report.getAssigned());
+            r.setStatus(report.getStatus());
+            r.setType(report.getType());
+            r.setPriority(report.getPriority());
+            r.setSummary(report.getSummary());
+        }
+        //refreshGridData();
+        topView.reportGrid.getDataProvider().refreshAll();
+        refreshBottomView();
     }
 
     @Override

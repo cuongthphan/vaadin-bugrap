@@ -4,6 +4,8 @@ import com.vaadin.annotations.Push;
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.PushStateNavigation;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
@@ -20,12 +22,17 @@ import javax.servlet.annotation.WebServlet;
 @Theme("mytheme")
 @StyleSheet({"https://fonts.googleapis.com/css?family=Roboto"})
 @Push
+@PushStateNavigation
 public class MainUI extends UI {
+    Navigator navigator;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        navigator = new Navigator(this, this);
         MainAppView mainAppView = new MainAppView();
-        setContent(mainAppView);
+        navigator.addView( ViewNames.MAINAPPVIEW, mainAppView);
+
+        navigator.navigateTo(ViewNames.MAINAPPVIEW);
         Broadcaster.register(mainAppView);
     }
 
