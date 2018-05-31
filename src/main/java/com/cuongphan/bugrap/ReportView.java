@@ -1,21 +1,25 @@
 package com.cuongphan.bugrap;
 
+import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
-import com.vaadin.ui.Button;
+import com.vaadin.server.FileResource;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.*;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 public class ReportView extends ReportDesign implements View {
     private BugrapRepository bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
     private Report report;
+    private LinkedList<UploadComponent> uploadComponentLinkedList = new LinkedList<>();
 
     private final Button.ClickListener update_button_clicked = new Button.ClickListener() {
         @Override
@@ -53,6 +57,7 @@ public class ReportView extends ReportDesign implements View {
             reportDetail.setValue(report.getDescription());
         }
     };
+    private UploadComponent uploadComponent;
 
     public ReportView() {
         bugrapRepository.populateWithTestData();
@@ -116,23 +121,166 @@ public class ReportView extends ReportDesign implements View {
                 reportDetail.setValue(null);
             }
 
-            addListeners();
+            addUpdateAndRevertListeners();
+
+            HasValue.ValueChangeListener reportValueChangeEvent = new HasValue.ValueChangeListener() {
+                @Override
+                public void valueChange(HasValue.ValueChangeEvent event) {
+                    if (event.isUserOriginated()) {
+                        setUpdateAndRevertStatus();
+                    }
+                }
+            };
+
+            versionNS.addValueChangeListener(reportValueChangeEvent);
+            priorityNS.addValueChangeListener(reportValueChangeEvent);
+            typeNS.addValueChangeListener(reportValueChangeEvent);
+            assignedNS.addValueChangeListener(reportValueChangeEvent);
+            statusNS.addValueChangeListener(reportValueChangeEvent);
+            reportDetail.addValueChangeListener(reportValueChangeEvent);
         }
 
-        if (reportList.size() > 1) {
-            openNewButton.setVisible(false);
+        openNewButton.setVisible(false);
+
+        addUploadLayoutListeners();
+        addCommentValueChangeListener();
+        addCancelButtonListener();
+
+        UploadReceiver uploadReceiver = new UploadReceiver();
+        attachmentButton.setReceiver(uploadReceiver);
+        attachmentButton.addStartedListener(uploadReceiver);
+        attachmentButton.addProgressListener(uploadReceiver);
+        attachmentButton.addFinishedListener(uploadReceiver);
+        attachmentButton.addSucceededListener(uploadReceiver);
+    }
+
+    private void addCancelButtonListener() {
+        cancelButton.addClickListener(event -> {
+            uploadLayout.removeAllComponents();
+            for (UploadComponent uploadComponent : uploadComponentLinkedList) {
+                uploadComponent.file.delete();
+            }
+        });
+    }
+
+    private void setUpdateAndRevertStatus() {
+        report = ReportSingleton.getInstance().getReports().getFirst();
+
+        if (!((priorityNS.getValue() == null && report.getPriority() == null) ||
+                (priorityNS.getValue() != null && priorityNS.getValue().equals(report.getPriority()))) ||
+                !((typeNS.getValue() == null && report.getType() == null) ||
+                (typeNS.getValue() != null && typeNS.getValue().equals(report.getType()))) ||
+                !((statusNS.getValue() == null && report.getStatus() == null) ||
+                (statusNS.getValue() != null && statusNS.getValue().equals(report.getStatus()))) ||
+                !((assignedNS.getValue() == null && report.getAssigned() == null) ||
+                (assignedNS.getValue() != null && assignedNS.getValue().equals(report.getAssigned()))) ||
+                !((versionNS.getValue() == null && report.getVersion() == null) ||
+                (versionNS.getValue() != null && versionNS.getValue().equals(report.getVersion()))) ||
+                !((reportDetail.getValue() == null && report.getDescription() == null) ||
+                (reportDetail.getValue() != null && reportDetail.getValue().equals(report.getDescription())))) {
+            updateButton.setEnabled(true);
+            revertButton.setEnabled(true);
+        }
+        else {
+            updateButton.setEnabled(false);
+            revertButton.setEnabled(false);
         }
     }
 
-    private void addListeners() {
-        updateButton.addClickListener(update_button_clicked);
+    private void addUploadLayoutListeners() {
+        uploadLayout.addComponentAttachListener(event -> {
+            if (!uploadLayout.getParent().isVisible()) {
+                commentTextArea.setRows(commentTextArea.getRows() - 2);
+            }
+            uploadLayout.getParent().setVisible(true);
+            doneButton.setEnabled(true);
+            cancelButton.setEnabled(true);
+        });
+        uploadLayout.addComponentDetachListener(event -> {
+            if (uploadLayout.getComponentCount() == 0) {
+                uploadLayout.getParent().setVisible(false);
+                commentTextArea.setRows(commentTextArea.getRows() + 2);
 
+                if (commentTextArea.getValue().isEmpty()) {
+                    doneButton.setEnabled(false);
+                    cancelButton.setEnabled(false);
+                }
+            }
+        });
+    }
+
+    private void addCommentValueChangeListener() {
+        commentTextArea.addValueChangeListener(event -> {
+            doneButton.setEnabled(true);
+            cancelButton.setEnabled(true);
+
+            if (commentTextArea.getValue().isEmpty() && uploadLayout.getComponentCount() == 0) {
+                doneButton.setEnabled(false);
+                cancelButton.setEnabled(false);
+            }
+        });
+    }
+
+    private void addUpdateAndRevertListeners() {
+        updateButton.addClickListener(update_button_clicked);
         revertButton.addClickListener(revert_button_clicked);
     }
 
-    public void removeListener() {
+    public void removeUpdateAndRevertListener() {
         updateButton.removeClickListener(update_button_clicked);
         updateButton.removeClickListener(revert_button_clicked);
     }
 
+    public class UploadReceiver implements Upload.Receiver, Upload.StartedListener, Upload.ProgressListener, Upload.FinishedListener, Upload.SucceededListener {
+        public File file;
+
+        @Override
+        public OutputStream receiveUpload(String filename, String mimeType) {
+            FileOutputStream fos = null;
+            try {
+                file = new File(filename);
+                fos = new FileOutputStream(file);
+            } catch (FileNotFoundException e) {
+                Notification.show("Could not open file<br/>",
+                        e.getMessage(),
+                        Notification.Type.ERROR_MESSAGE);
+                return null;
+            }
+            return new ByteArrayOutputStream();
+        }
+
+        @Override
+        public void uploadStarted(Upload.StartedEvent event) {
+            uploadComponent = new UploadComponent();
+            uploadComponentLinkedList.add(uploadComponent);
+            uploadLayout.removeAllComponents();
+
+            for (UploadComponent component : uploadComponentLinkedList) {
+                uploadLayout.addComponent(component);
+            }
+
+            uploadComponent.attachmentNameLabel.setValue(event.getFilename());
+            uploadComponent.attachmentCancelButton.addClickListener(e -> {
+               uploadComponentLinkedList.remove((UploadComponent) e.getComponent().getParent().getParent());
+               uploadLayout.removeComponent(e.getComponent().getParent().getParent());
+
+            });
+            uploadLayout.addComponent(uploadComponent);
+        }
+
+        @Override
+        public void updateProgress(long readBytes, long contentLength) {
+            uploadComponent.attachmentProgressBar.setValue( readBytes / (float) contentLength);
+        }
+
+        @Override
+        public void uploadFinished(Upload.FinishedEvent event) {
+            uploadComponent.attachmentProgressBar.setVisible(false);
+        }
+
+        @Override
+        public void uploadSucceeded(Upload.SucceededEvent event) {
+            uploadComponent.file = file;
+        }
+    }
 }

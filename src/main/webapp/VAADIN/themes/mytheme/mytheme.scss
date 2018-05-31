@@ -144,15 +144,12 @@ $v-border-radius: 10px;
     border-bottom: solid 1px $color-one;
   }
 
-  #link-report-button {
+  #link-report-button, .attachment-cancel-button {
     height: auto;
     width: auto;
+    padding: 0 5px;
     background-color: transparent;
     color: $color-one;
-  }
-
-  #link-report-button:hover {
-    background-color: $color-five;
   }
 
   #projectCountLabel{
@@ -173,5 +170,17 @@ $v-border-radius: 10px;
   .focus-item {
     background: $color-three;
     color: white;
+  }
+
+  #non-padding-layout {
+    padding: 0;
+  }
+
+  .v-customcomponent .v-progressbar-indicator {
+    min-width: 10px;
+  }
+
+  .v-panel {
+    padding: 5px 10px !important;
   }
 }

@@ -14600,15 +14600,12 @@ div.v-layout.v-horizontal.v-widget {
 	border-bottom: solid 1px #05386B;
 }
 
-.mytheme #link-report-button {
+.mytheme #link-report-button, .mytheme .attachment-cancel-button {
 	height: auto;
 	width: auto;
+	padding: 0 5px;
 	background-color: transparent;
 	color: #05386B;
-}
-
-.mytheme #link-report-button:hover {
-	background-color: #EDF5E1;
 }
 
 .mytheme #projectCountLabel {
@@ -14629,4 +14626,16 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .focus-item {
 	background: #5CDB95;
 	color: white;
+}
+
+.mytheme #non-padding-layout {
+	padding: 0;
+}
+
+.mytheme .v-customcomponent .v-progressbar-indicator {
+	min-width: 10px;
+}
+
+.mytheme .v-panel {
+	padding: 5px 10px !important;
 }

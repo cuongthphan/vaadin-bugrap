@@ -194,6 +194,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         topView.reportGrid.addSelectionListener(event -> {
             if (topView.reportGrid.getSelectedItems().size() != 0) {
                 bottomView = new ReportView();
+
                 bottomView.breadcrumbsLayout.setVisible(false);
                 bottomView.attachmentLayout.setVisible(false);
                 setSecondComponent(bottomView);
@@ -247,7 +248,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             }
         });
 
-        bottomView.removeListener();
+        bottomView.removeUpdateAndRevertListener();
 
         bottomView.updateButton.addClickListener(event -> {
             for (Report r : topView.reportGrid.getSelectedItems()) {
