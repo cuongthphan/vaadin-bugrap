@@ -14571,8 +14571,8 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme #report-detail-textarea {
-	border-radius: 0 !important;
-	padding: 0 50px 10px 50px;
+	padding-left: 0;
+	background-color: white;
 	border: none;
 }
 
@@ -14583,7 +14583,6 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .v-textarea {
 	border-radius: 0;
 	border: solid 1px #05386B;
-	margin-top: 10px;
 }
 
 .mytheme #vertical-layout-wrapper {
@@ -14638,4 +14637,12 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-panel {
 	padding: 5px 10px !important;
+}
+
+.mytheme .report-detail-layout {
+	padding: 0;
+}
+
+.mytheme .report-detail-layout .v-spacing {
+	height: 0;
 }

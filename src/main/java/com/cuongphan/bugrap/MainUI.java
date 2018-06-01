@@ -24,13 +24,14 @@ import javax.servlet.annotation.WebServlet;
 @Push
 @PushStateNavigation
 public class MainUI extends UI {
-    Navigator navigator;
+    public Navigator navigator;
+    public MainAppView mainAppView;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         navigator = new Navigator(this, this);
 
-        MainAppView mainAppView = new MainAppView();
+        mainAppView = new MainAppView();
         Broadcaster.register(mainAppView);
         navigator.addView( ViewNames.MAINAPPVIEW, mainAppView);
         navigator.addView( ViewNames.FULLREPORTVIEW, new ReportView());

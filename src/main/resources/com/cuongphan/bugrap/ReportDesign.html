@@ -39,7 +39,19 @@
      </vaadin-button>
     </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
-   <vaadin-text-area rows="20" id="report-detail-textarea" size-full _id="reportDetail" :expand></vaadin-text-area>
+   <vaadin-vertical-layout id="report-description-layout" size-full :expand>
+    <vaadin-horizontal-layout width-full>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e80d" plain-text _id="reportAuthorLabel"></vaadin-label>
+     <vaadin-vertical-layout margin="false" _id="reportDetailLayout" :right :expand>
+      <vaadin-label plain-text _id="authorNameLabel">
+        Author name here 
+      </vaadin-label>
+      <vaadin-text-area rows="10" id="report-detail-textarea" width-full _id="reportDetail">
+        This is where the report description should be displayed fsdfsddsfisdhfisds sduivhdihsdfhs sdihfidshfd sidfhiudshfidshfishd sdfhidshfidshidsh sidhfdshfjsdhihsdvisds sdfhsdvhisdhvsidh sdfihdsfhsdhsdhid sdfhsdhdsids sdhsdhfjhflghosjv 
+      </vaadin-text-area>
+     </vaadin-vertical-layout>
+    </vaadin-horizontal-layout>
+   </vaadin-vertical-layout>
    <vaadin-vertical-layout id="attachment-layout" size-full _id="attachmentLayout" :expand>
     <vaadin-horizontal-layout width-full :expand>
      <vaadin-text-area rows="11" placeholder="Write a new comment..." width-full _id="commentTextArea"></vaadin-text-area>

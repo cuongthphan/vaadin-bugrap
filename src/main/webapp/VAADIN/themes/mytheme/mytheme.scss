@@ -115,8 +115,8 @@ $v-border-radius: 10px;
   }
 
   #report-detail-textarea {
-    border-radius: 0 !important;
-    padding: 0 50px 10px 50px;
+    padding-left: 0;
+    background-color: white;
     border: none;
   }
 
@@ -127,7 +127,6 @@ $v-border-radius: 10px;
   .v-textarea {
     border-radius: 0;
     border: solid 1px $color-one;
-    margin-top: 10px;
   }
 
   #vertical-layout-wrapper {
@@ -182,5 +181,13 @@ $v-border-radius: 10px;
 
   .v-panel {
     padding: 5px 10px !important;
+  }
+
+  .report-detail-layout {
+    padding: 0;
+  }
+
+  .report-detail-layout .v-spacing {
+    height: 0;
   }
 }

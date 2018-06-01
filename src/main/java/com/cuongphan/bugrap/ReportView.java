@@ -4,15 +4,20 @@ import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewProvider;
 import com.vaadin.server.FileResource;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import org.vaadin.bugrap.domain.BugrapRepository;
+import org.vaadin.bugrap.domain.entities.Comment;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
@@ -114,13 +119,15 @@ public class ReportView extends ReportDesign implements View {
             assignedNS.setDataProvider(reporterLDP);
             assignedNS.setValue(report.getAssigned());
 
-            if (report.getDescription() != null) {
-                reportDetail.setValue(report.getDescription());
+            reportDetail.setValue(report.getDescription());
+            if (report.getAuthor() != null) {
+                authorNameLabel.setValue(report.getAuthor().getName());
             }
             else {
-                reportDetail.setValue(null);
+                authorNameLabel.setValue("Anonymous");
             }
 
+            reportDetailLayout.addStyleName("report-detail-layout");
             addUpdateAndRevertListeners();
 
             HasValue.ValueChangeListener reportValueChangeEvent = new HasValue.ValueChangeListener() {
@@ -145,6 +152,7 @@ public class ReportView extends ReportDesign implements View {
         addUploadLayoutListeners();
         addCommentValueChangeListener();
         addCancelButtonListener();
+        addDoneButtonListener();
 
         UploadReceiver uploadReceiver = new UploadReceiver();
         attachmentButton.setReceiver(uploadReceiver);
@@ -154,12 +162,61 @@ public class ReportView extends ReportDesign implements View {
         attachmentButton.addSucceededListener(uploadReceiver);
     }
 
+    private void addDoneButtonListener() {
+        doneButton.addClickListener(event -> {
+            uploadLayout.removeAllComponents();
+            String username = ((MainUI) getUI()).mainAppView.topView.userName.getValue();
+
+            if (commentTextArea.getValue() != null && !commentTextArea.getValue().isEmpty()) {
+                Comment comment = new Comment();
+                comment.setComment(commentTextArea.getValue());
+                commentTextArea.setValue(null);
+                for (Reporter reporter : bugrapRepository.findReporters()) {
+                    if (reporter.getName().equals(username)) {
+                        comment.setAuthor(reporter);
+                        break;
+                    }
+                }
+                comment.setReport(ReportSingleton.getInstance().getReports().getFirst());
+                comment.setTimestamp(new Date());
+                comment.setType(Comment.Type.COMMENT);
+                bugrapRepository.save(comment);
+            }
+
+            for (UploadComponent uploadComponent : uploadComponentLinkedList) {
+                Comment comment = new Comment();
+                comment.setReport(ReportSingleton.getInstance().getReports().getFirst());
+                comment.setTimestamp(new Date());
+                comment.setType(Comment.Type.ATTACHMENT);
+                Path filePath = Paths.get(uploadComponent.file.getAbsolutePath());
+
+                try {
+                    comment.setAttachment(Files.readAllBytes(filePath));
+                    comment.setAttachmentName(uploadComponent.file.getName());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                for (Reporter reporter : bugrapRepository.findReporters()) {
+                    if (reporter.getName().equals(username)) {
+                        comment.setAuthor(reporter);
+                        break;
+                    }
+                }
+                bugrapRepository.save(comment);
+                uploadComponent.file.delete();
+            }
+
+            uploadComponentLinkedList.clear();
+        });
+    }
+
     private void addCancelButtonListener() {
         cancelButton.addClickListener(event -> {
             uploadLayout.removeAllComponents();
             for (UploadComponent uploadComponent : uploadComponentLinkedList) {
                 uploadComponent.file.delete();
             }
+            uploadComponentLinkedList.clear();
         });
     }
 

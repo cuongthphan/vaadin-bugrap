@@ -36,6 +36,9 @@ public class ReportDesign extends VerticalLayout {
     protected NativeSelect<org.vaadin.bugrap.domain.entities.ProjectVersion> versionNS;
     protected Button updateButton;
     protected Button revertButton;
+    protected Label reportAuthorLabel;
+    protected VerticalLayout reportDetailLayout;
+    protected Label authorNameLabel;
     protected TextArea reportDetail;
     protected VerticalLayout attachmentLayout;
     protected TextArea commentTextArea;

@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class MainAppView extends VerticalSplitPanel implements View, Broadcaster.BroadcastListener {
     private BugrapRepository bugrapRepository;
-    private MainView topView;
+    public MainView topView;
     private Set<String> checkedItems = new HashSet<>();
     private String focusItemStyle = "focus-item";
     private MenuBar.MenuItem everyoneItem;
