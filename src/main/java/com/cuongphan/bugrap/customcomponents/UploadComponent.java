@@ -1,4 +1,4 @@
-package com.cuongphan.bugrap;
+package com.cuongphan.bugrap.customcomponents;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.*;

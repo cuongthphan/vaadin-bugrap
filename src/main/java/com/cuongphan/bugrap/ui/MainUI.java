@@ -1,5 +1,9 @@
-package com.cuongphan.bugrap;
+package com.cuongphan.bugrap.ui;
 
+import com.cuongphan.bugrap.utils.Broadcaster;
+import com.cuongphan.bugrap.utils.ViewNames;
+import com.cuongphan.bugrap.designs_views.MainAppView;
+import com.cuongphan.bugrap.designs_views.ReportView;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;

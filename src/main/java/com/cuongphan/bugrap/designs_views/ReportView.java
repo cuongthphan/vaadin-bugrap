@@ -1,12 +1,12 @@
-package com.cuongphan.bugrap;
+package com.cuongphan.bugrap.designs_views;
 
+import com.cuongphan.bugrap.utils.Broadcaster;
+import com.cuongphan.bugrap.ui.MainUI;
+import com.cuongphan.bugrap.utils.ReportSingleton;
+import com.cuongphan.bugrap.customcomponents.UploadComponent;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewProvider;
-import com.vaadin.server.FileResource;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.*;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Comment;

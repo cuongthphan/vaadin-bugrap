@@ -1,4 +1,4 @@
-package com.cuongphan.bugrap;
+package com.cuongphan.bugrap.designs_views;
 
 import com.vaadin.navigator.View;
 

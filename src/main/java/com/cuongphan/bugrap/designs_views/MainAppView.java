@@ -1,5 +1,9 @@
-package com.cuongphan.bugrap;
+package com.cuongphan.bugrap.designs_views;
 
+import com.cuongphan.bugrap.utils.Broadcaster;
+import com.cuongphan.bugrap.ui.MainUI;
+import com.cuongphan.bugrap.utils.ReportSingleton;
+import com.cuongphan.bugrap.utils.ViewNames;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -14,7 +18,6 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 

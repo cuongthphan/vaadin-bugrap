@@ -1,4 +1,4 @@
-package com.cuongphan.bugrap;
+package com.cuongphan.bugrap.utils;
 
 import java.io.Serializable;
 import java.util.LinkedList;

@@ -1,4 +1,4 @@
-package com.cuongphan.bugrap;
+package com.cuongphan.bugrap.utils;
 
 import org.vaadin.bugrap.domain.entities.Report;
 
