@@ -1,4 +1,4 @@
-package com.cuongphan.bugrap.designs_views;
+package com.cuongphan.bugrap;
 
 import com.cuongphan.bugrap.utils.Broadcaster;
 import com.cuongphan.bugrap.ui.MainUI;

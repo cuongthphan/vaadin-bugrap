@@ -190,4 +190,14 @@ $v-border-radius: 10px;
   .report-detail-layout .v-spacing {
     height: 0;
   }
+
+  #report-description-panel {
+    border: none;
+  }
+
+  .comment-layout {
+    padding: 10px;
+    background-color: $color-five;
+    border-radius: 10px;
+  }
 }

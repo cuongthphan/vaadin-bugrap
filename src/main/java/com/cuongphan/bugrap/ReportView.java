@@ -1,5 +1,6 @@
-package com.cuongphan.bugrap.designs_views;
+package com.cuongphan.bugrap;
 
+import com.cuongphan.bugrap.customcomponents.CommentComponent;
 import com.cuongphan.bugrap.utils.Broadcaster;
 import com.cuongphan.bugrap.ui.MainUI;
 import com.cuongphan.bugrap.utils.ReportSingleton;
@@ -25,6 +26,7 @@ public class ReportView extends ReportDesign implements View {
     private BugrapRepository bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
     private Report report;
     private LinkedList<UploadComponent> uploadComponentLinkedList = new LinkedList<>();
+    private LinkedList<CommentComponent> commentComponentLinkedList = new LinkedList<>();
 
     private final Button.ClickListener update_button_clicked = new Button.ClickListener() {
         @Override
@@ -160,6 +162,36 @@ public class ReportView extends ReportDesign implements View {
         attachmentButton.addProgressListener(uploadReceiver);
         attachmentButton.addFinishedListener(uploadReceiver);
         attachmentButton.addSucceededListener(uploadReceiver);
+
+        //display comments
+        displayComments();
+    }
+
+    private void displayComments() {
+        while (1 < reportDescriptionLayout.getComponentCount()) {
+            reportDescriptionLayout.removeComponent(reportDescriptionLayout.getComponent(1));
+        }
+        if (!ReportSingleton.getInstance().getReports().isEmpty()) {
+            List<Comment> comments = bugrapRepository.findComments(ReportSingleton.getInstance().getReports().getFirst());
+            Iterator<Comment> i = comments.iterator();
+            if (i.hasNext()) {
+                Comment comment = i.next();
+
+                while (true) {
+
+                }
+            }
+
+            for (Comment comment : bugrapRepository.findComments(ReportSingleton.getInstance().getReports().getFirst())) {
+                if (comment.getType() == Comment.Type.COMMENT) {
+                    CommentComponent component = new CommentComponent();
+                    component.authorNameLabel.setValue(comment.getAuthor().getName());
+                    component.commentDetail.setValue(comment.getComment());
+                    reportDescriptionLayout.addComponent(component);
+                    commentComponentLinkedList.add(component);
+                }
+            }
+        }
     }
 
     private void addDoneButtonListener() {
@@ -170,7 +202,7 @@ public class ReportView extends ReportDesign implements View {
             if (commentTextArea.getValue() != null && !commentTextArea.getValue().isEmpty()) {
                 Comment comment = new Comment();
                 comment.setComment(commentTextArea.getValue());
-                commentTextArea.setValue(null);
+                commentTextArea.setValue("");
                 for (Reporter reporter : bugrapRepository.findReporters()) {
                     if (reporter.getName().equals(username)) {
                         comment.setAuthor(reporter);
@@ -207,6 +239,8 @@ public class ReportView extends ReportDesign implements View {
             }
 
             uploadComponentLinkedList.clear();
+            displayComments();
+            reportDescriptionPanel.setScrollTop(Integer.MAX_VALUE);
         });
     }
 

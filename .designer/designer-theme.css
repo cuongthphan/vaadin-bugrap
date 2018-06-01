@@ -14646,3 +14646,13 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .report-detail-layout .v-spacing {
 	height: 0;
 }
+
+.mytheme #report-description-panel {
+	border: none;
+}
+
+.mytheme .comment-layout {
+	padding: 10px;
+	background-color: #EDF5E1;
+	border-radius: 10px;
+}
