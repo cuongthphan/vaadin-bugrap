@@ -14,6 +14,7 @@ public class CommentComponent extends com.vaadin.ui.CustomComponent {
 
     public CommentComponent() {
         commentLayout = new HorizontalLayout();
+        commentLayout.addStyleName("comment-layout");
         commentLayout.setWidth(100, Unit.PERCENTAGE);
 
         authorIconLabel = new Label();
@@ -33,6 +34,8 @@ public class CommentComponent extends com.vaadin.ui.CustomComponent {
 
         commentDetail = new Label();
         commentDetail.setValue("This is where the comment is");
-        commentDetailLayout.addComponentsAndExpand(commentDetail);
+        commentDetailLayout.addComponent(commentDetail);
+
+        setCompositionRoot(commentLayout);
     }
 }

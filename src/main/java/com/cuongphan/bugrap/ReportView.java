@@ -46,6 +46,14 @@ public class ReportView extends ReportDesign implements View {
             ReportSingleton.getInstance().addReport(report);
 
             Broadcaster.broadcast("Update button clicked");
+
+            ReportSingleton.getInstance().clearReports();
+            ReportSingleton.getInstance().addReport(report);
+
+            updateButton.setEnabled(false);
+            revertButton.setEnabled(false);
+
+            addTimeStampToReportLabel();
         }
     };
     private final Button.ClickListener revert_button_clicked = new Button.ClickListener() {
@@ -53,15 +61,17 @@ public class ReportView extends ReportDesign implements View {
         public void buttonClick(Button.ClickEvent event) {
             LinkedList<Report> reportList = ReportSingleton.getInstance().getReports();
 
-            Report report = reportList.getFirst();
-            report = bugrapRepository.getReportById(report.getId());
+            Report r = reportList.getFirst();
+            r = bugrapRepository.getReportById(report.getId());
 
-            priorityNS.setValue(report.getPriority());
-            typeNS.setValue(report.getType());
-            statusNS.setValue(report.getStatus());
-            assignedNS.setValue(report.getAssigned());
-            versionNS.setValue(report.getVersion());
-            reportDetail.setValue(report.getDescription());
+            priorityNS.setValue(r.getPriority());
+            typeNS.setValue(r.getType());
+            statusNS.setValue(r.getStatus());
+            assignedNS.setValue(r.getAssigned());
+            versionNS.setValue(r.getVersion());
+            reportDetail.setValue(r.getDescription());
+            updateButton.setEnabled(false);
+            revertButton.setEnabled(false);
         }
     };
     private UploadComponent uploadComponent;
@@ -123,11 +133,13 @@ public class ReportView extends ReportDesign implements View {
 
             reportDetail.setValue(report.getDescription());
             if (report.getAuthor() != null) {
-                authorNameLabel.setValue(report.getAuthor().getName());
+                authorNameLabel.setValue(report.getAuthor().getName() + " (" + report.getTimestamp() +")");
             }
             else {
                 authorNameLabel.setValue("Anonymous");
             }
+
+            addTimeStampToReportLabel();
 
             reportDetailLayout.addStyleName("report-detail-layout");
             addUpdateAndRevertListeners();
@@ -167,21 +179,54 @@ public class ReportView extends ReportDesign implements View {
         displayComments();
     }
 
+    public void addTimeStampToReportLabel() {
+        if (ReportSingleton.getInstance().getReports().isEmpty()) {
+            return;
+        }
+        authorNameLabel.setValue((authorNameLabel.getValue().split("\\("))[0]);
+
+        report = ReportSingleton.getInstance().getReports().getFirst();
+        report = bugrapRepository.getReportById(report.getId());
+
+        long diff = (new Date()).getTime() - report.getTimestamp().getTime();
+
+        if (diff > 0) {
+            long diffMin = diff / (60 * 1000) % 60;
+            long diffHr = diff / (60 * 60 * 1000) % 60;
+            long diffDay = diff / (24 * 60 * 60 * 1000);
+
+            if (diffDay > 7) {
+                authorNameLabel.setValue(authorNameLabel.getValue() + " (" + report.getTimestamp().toString() + ")");
+            }
+            else if (diffDay <= 7 && diffDay > 1) {
+                authorNameLabel.setValue(authorNameLabel.getValue() + " (" + diffDay + " days ago)");
+            }
+            else if (diffDay == 1) {
+                authorNameLabel.setValue(authorNameLabel.getValue() + " (1 day ago)");
+            }
+            else if (diffHr > 1) {
+                authorNameLabel.setValue(authorNameLabel.getValue() + " (" + diffHr + " hours ago)");
+            }
+            else if (diffHr == 1) {
+                authorNameLabel.setValue(authorNameLabel.getValue() + " (1 hour ago)");
+            }
+            else if (diffMin > 1) {
+                authorNameLabel.setValue(authorNameLabel.getValue() + " (" + diffMin + " minutes ago)");
+            }
+            else if (diffMin == 1) {
+                authorNameLabel.setValue(authorNameLabel.getValue() + " (1 minute ago)");
+            }
+            else {
+                authorNameLabel.setValue(authorNameLabel.getValue() + " (Just now)");
+            }
+        }
+    }
+
     private void displayComments() {
         while (1 < reportDescriptionLayout.getComponentCount()) {
             reportDescriptionLayout.removeComponent(reportDescriptionLayout.getComponent(1));
         }
         if (!ReportSingleton.getInstance().getReports().isEmpty()) {
-            List<Comment> comments = bugrapRepository.findComments(ReportSingleton.getInstance().getReports().getFirst());
-            Iterator<Comment> i = comments.iterator();
-            if (i.hasNext()) {
-                Comment comment = i.next();
-
-                while (true) {
-
-                }
-            }
-
             for (Comment comment : bugrapRepository.findComments(ReportSingleton.getInstance().getReports().getFirst())) {
                 if (comment.getType() == Comment.Type.COMMENT) {
                     CommentComponent component = new CommentComponent();

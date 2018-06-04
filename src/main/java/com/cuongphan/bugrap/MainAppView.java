@@ -45,8 +45,10 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         setSizeFull();
 
         topView = new MainView();
+        bottomView = new ReportView();
 
         setFirstComponent(topView);
+        setSecondComponent(bottomView);
         setSplitPosition(100, Unit.PERCENTAGE);
 
         //add search box
@@ -202,7 +204,6 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                 bottomView.attachmentLayout.setVisible(false);
                 setSecondComponent(bottomView);
                 setLocked(false);
-                refreshBottomView();
 
                 //display second view if 1 report is selected
                 if (topView.reportGrid.getSelectedItems().size() == 1) {
@@ -212,11 +213,12 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                     bottomView.openNewButton.setVisible(true);
                     bottomView.reportDetail.setVisible(true);
 
-                    ReportSingleton.getInstance().getReports().clear();
+                    ReportSingleton.getInstance().clearReports();
                     for (Report report : topView.reportGrid.getSelectedItems()) {
                         ReportSingleton.getInstance().addReport(report);
                     }
 
+                    refreshBottomView();
                     setSplitPosition(60, Unit.PERCENTAGE);
                 }
                 // if more than 1 reported chosen
@@ -347,6 +349,14 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             bottomView.assignedNS.setDataProvider(reporterLDP);
             bottomView.assignedNS.setValue(report.getAssigned());
 
+            if (report.getAuthor() != null) {
+                bottomView.authorNameLabel.setValue(report.getAuthor().getName());
+            }
+            else {
+                bottomView.authorNameLabel.setValue("Anonymous");
+            }
+
+            bottomView.addTimeStampToReportLabel();
             bottomView.reportDetail.setValue(report.getDescription());
 
             break;
@@ -440,8 +450,6 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             topView.reportGrid.select(r);
         }
 
-        //refreshGridData();
-        //topView.reportGrid.getDataProvider().refreshAll();
         refreshBottomView();
     }
 
