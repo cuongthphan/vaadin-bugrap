@@ -14636,7 +14636,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-panel {
-	padding: 5px 10px !important;
+	padding: 5px 10px;
 }
 
 .mytheme .report-detail-layout {
@@ -14655,4 +14655,18 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 10px;
 	background-color: #EDF5E1;
 	border-radius: 10px;
+}
+
+.mytheme #grid-panel {
+	border-radius: 0;
+	border: none;
+	padding: 0;
+}
+
+.mytheme .priority {
+	background: #279683 none;
+}
+
+.mytheme .priority-layout .v-spacing {
+	width: 1px;
 }

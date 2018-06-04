@@ -180,7 +180,7 @@ $v-border-radius: 10px;
   }
 
   .v-panel {
-    padding: 5px 10px !important;
+    padding: 5px 10px;
   }
 
   .report-detail-layout {
@@ -199,5 +199,19 @@ $v-border-radius: 10px;
     padding: 10px;
     background-color: $color-five;
     border-radius: 10px;
+  }
+
+  #grid-panel {
+    border-radius: 0;
+    border: none;
+    padding: 0;
+  }
+
+  .priority {
+    background: $color-two none;
+  }
+
+  .priority-layout .v-spacing {
+    width: 1px;
   }
 }

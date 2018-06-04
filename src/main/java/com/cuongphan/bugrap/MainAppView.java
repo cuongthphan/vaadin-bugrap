@@ -1,15 +1,21 @@
 package com.cuongphan.bugrap;
 
+import com.cuongphan.bugrap.customcomponents.PriorityComponent;
 import com.cuongphan.bugrap.utils.Broadcaster;
 import com.cuongphan.bugrap.ui.MainUI;
 import com.cuongphan.bugrap.utils.ReportSingleton;
 import com.cuongphan.bugrap.utils.ViewNames;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.data.provider.Query;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.server.BrowserWindowOpener;
+import com.vaadin.server.SerializableComparator;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
+import com.vaadin.ui.components.grid.SortOrderProvider;
+import com.vaadin.ui.renderers.ComponentRenderer;
+import com.vaadin.ui.renderers.Renderer;
 import org.vaadin.addons.searchbox.SearchBox;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
@@ -17,6 +23,7 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -64,6 +71,15 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         topView.searchBoxLayout.addComponent(searchBox);
 
         //set expand ratio for grid columns
+        topView.reportGrid.addComponentColumn(report -> new PriorityComponent(report.getPriority()))
+                .setCaption("PRIORITY")
+                .setId("priority")
+                .setComparator(new SerializableComparator<Report>() {
+                    @Override
+                    public int compare(Report o1, Report o2) {
+                        return o1.getPriority().compareTo(o2.getPriority());
+                    }
+                });
         topView.reportGrid.getColumn("version").setExpandRatio(1);
         topView.reportGrid.getColumn("version").setHidden(true);
         topView.reportGrid.getColumn("priority").setExpandRatio(1);
@@ -72,7 +88,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         topView.reportGrid.getColumn("assigned").setExpandRatio(1);
         topView.reportGrid.getColumn("timestamp").setExpandRatio(1);
         topView.reportGrid.getColumn("reportedTimestamp").setExpandRatio(1);
+        topView.reportGrid.sort("version", SortDirection.DESCENDING);
 
+        topView.reportGrid.setColumnOrder("version", "priority");
         //get data
         bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
         bugrapRepository.populateWithTestData();
@@ -108,10 +126,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         });
 
         topView.versionNS.addValueChangeListener(e -> {
-            if (e.isUserOriginated()) {
-                if (topView.projectComboBox.getValue() != null)
-                    refreshGridData();
-            }
+            refreshGridData();
         });
 
         MenuBar.Command assigneeCommand = new MenuBar.Command() {
@@ -395,8 +410,10 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
         if (query.projectVersion == null) {
             topView.reportGrid.getColumn("version").setHidden(false);
+            topView.reportGrid.sort("version", SortDirection.ASCENDING);
         } else {
             topView.reportGrid.getColumn("version").setHidden(true);
+            topView.reportGrid.sort("priority", SortDirection.DESCENDING);
         }
         reportLDP.setSortOrder(report -> report.getPriority(), SortDirection.DESCENDING);
 
@@ -418,7 +435,8 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                     && report.getSummary().toLowerCase().contains(searchBox.getSearchField().getValue().toLowerCase()));
         }
 
-        topView.reportGrid.setDataProvider(reportLDP);
+        topView.reportGrid.setItems(reportLDP.getItems());
+        topView.reportGrid.scrollToStart();
     }
 
     @Override

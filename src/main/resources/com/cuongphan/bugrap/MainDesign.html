@@ -73,12 +73,11 @@
      </vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
-   <vaadin-horizontal-layout size-full :expand>
-    <vaadin-grid height-mode="row" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" selection-mode="multi" _id="reportGrid" :expand>
+   <vaadin-panel id="grid-panel" size-full _id="gridPanel" :expand>
+    <vaadin-grid height-mode="row" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report" selection-mode="multi" _id="reportGrid">
      <table>
       <colgroup>
        <col column-id="version" sortable>
-       <col column-id="priority" sortable>
        <col column-id="type" sortable>
        <col column-id="summary" sortable>
        <col column-id="assigned" sortable>
@@ -88,7 +87,6 @@
       <thead>
        <tr default>
         <th plain-text column-ids="version">VERSION</th>
-        <th plain-text column-ids="priority">PRIORITY</th>
         <th plain-text column-ids="type">TYPE</th>
         <th plain-text column-ids="summary">SUMMARY</th>
         <th plain-text column-ids="assigned">ASSIGNED</th>
@@ -99,7 +97,7 @@
       <tbody></tbody>
      </table>
     </vaadin-grid>
-   </vaadin-horizontal-layout>
+   </vaadin-panel>
   </vaadin-vertical-layout>
  </body>
 </html>
