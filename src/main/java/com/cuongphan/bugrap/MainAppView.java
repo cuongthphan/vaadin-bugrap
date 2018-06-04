@@ -47,6 +47,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
     private MenuBar.MenuItem needsMoreInfoSubItem;
     private SearchBox searchBox;
     private ReportView bottomView;
+    private Set<Report> previousSelectedItems = new HashSet<>();
 
     public MainAppView() {
         setSizeFull();
@@ -126,7 +127,18 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         });
 
         topView.versionNS.addValueChangeListener(e -> {
+            previousSelectedItems.clear();
+            for (Report r : topView.reportGrid.getSelectedItems()) {
+                if ((e.getValue() == null) || (r.getVersion()!= null && r.getVersion().equals(e.getValue()))) {
+                    previousSelectedItems.add(r);
+                }
+            }
             refreshGridData();
+            for (Report r : previousSelectedItems) {
+                topView.reportGrid.select(r);
+            }
+            previousSelectedItems.clear();
+            String s;
         });
 
         MenuBar.Command assigneeCommand = new MenuBar.Command() {
