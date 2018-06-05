@@ -6,6 +6,7 @@ import com.cuongphan.bugrap.ui.MainUI;
 import com.cuongphan.bugrap.utils.ReportSingleton;
 import com.cuongphan.bugrap.customcomponents.UploadComponent;
 import com.cuongphan.bugrap.utils.TimeDifferenceCalculator;
+import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
@@ -177,6 +178,9 @@ public class ReportView extends ReportDesign implements View {
         attachmentButton.addFinishedListener(uploadReceiver);
         attachmentButton.addSucceededListener(uploadReceiver);
 
+        Binder<Report> reportBinder = new Binder<>();
+
+        
         //display comments
         displayComments();
     }
@@ -194,6 +198,7 @@ public class ReportView extends ReportDesign implements View {
                     reportDescriptionLayout.addComponent(component);
                     commentComponentLinkedList.add(component);
                 }
+                //TODO: display attachments
             }
         }
     }

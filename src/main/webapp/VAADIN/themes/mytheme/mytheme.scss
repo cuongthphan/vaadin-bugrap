@@ -214,4 +214,9 @@ $v-border-radius: 10px;
   .priority-layout .v-spacing {
     width: 1px;
   }
+
+  #login-form {
+    border-radius: 0 20px 0 20px;
+    background: $color-five;
+  }
 }

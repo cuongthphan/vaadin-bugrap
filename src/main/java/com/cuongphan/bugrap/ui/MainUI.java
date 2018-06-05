@@ -1,5 +1,6 @@
 package com.cuongphan.bugrap.ui;
 
+import com.cuongphan.bugrap.LoginView;
 import com.cuongphan.bugrap.utils.Broadcaster;
 import com.cuongphan.bugrap.utils.ViewNames;
 import com.cuongphan.bugrap.MainAppView;
@@ -30,13 +31,16 @@ import javax.servlet.annotation.WebServlet;
 public class MainUI extends UI {
     public Navigator navigator;
     public MainAppView mainAppView;
+    public LoginView loginView;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         navigator = new Navigator(this, this);
 
         mainAppView = new MainAppView();
-        Broadcaster.register(mainAppView);
+        loginView = new LoginView();
+
+        navigator.addView(ViewNames.LOGINVIEW, loginView);
         navigator.addView(ViewNames.MAINAPPVIEW, mainAppView);
         navigator.addView(ViewNames.FULLREPORTVIEW, new ReportView());
     }

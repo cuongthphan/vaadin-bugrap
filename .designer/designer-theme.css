@@ -14670,3 +14670,8 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .priority-layout .v-spacing {
 	width: 1px;
 }
+
+.mytheme #login-form {
+	border-radius: 0 20px 0 20px;
+	background: #EDF5E1;
+}
