@@ -42,6 +42,7 @@ public class ReportDesign extends VerticalLayout {
     protected Label reportAuthorLabel;
     protected VerticalLayout reportDetailLayout;
     protected Label authorNameLabel;
+    protected Label timeStampLabel;
     protected TextArea reportDetail;
     protected VerticalLayout attachmentLayout;
     protected TextArea commentTextArea;

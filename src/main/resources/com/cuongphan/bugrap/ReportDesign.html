@@ -44,9 +44,14 @@
      <vaadin-horizontal-layout width-full>
       <vaadin-label icon="fonticon://Vaadin-Icons/e80d" plain-text _id="reportAuthorLabel"></vaadin-label>
       <vaadin-vertical-layout margin="false" _id="reportDetailLayout" :right :expand>
-       <vaadin-label plain-text _id="authorNameLabel">
-         Author name here 
-       </vaadin-label>
+       <vaadin-horizontal-layout>
+        <vaadin-label plain-text _id="authorNameLabel">
+          Author name here 
+        </vaadin-label>
+        <vaadin-label plain-text _id="timeStampLabel">
+          put time here 
+        </vaadin-label>
+       </vaadin-horizontal-layout>
        <vaadin-text-area rows="10" id="report-detail-textarea" width-full _id="reportDetail">
          This is where the report description should be displayed fsdfsddsfisdhfisds sduivhdihsdfhs sdihfidshfd sidfhiudshfidshfishd sdfhidshfidshidsh sidhfdshfjsdhihsdvisds sdfhsdvhisdhvsidh sdfihdsfhsdhsdhid sdfhsdhdsids sdhsdhfjhflghosjv 
        </vaadin-text-area>

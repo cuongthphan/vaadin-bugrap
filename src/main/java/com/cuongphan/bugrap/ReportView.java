@@ -5,6 +5,7 @@ import com.cuongphan.bugrap.utils.Broadcaster;
 import com.cuongphan.bugrap.ui.MainUI;
 import com.cuongphan.bugrap.utils.ReportSingleton;
 import com.cuongphan.bugrap.customcomponents.UploadComponent;
+import com.cuongphan.bugrap.utils.TimeDifferenceCalculator;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
@@ -45,15 +46,16 @@ public class ReportView extends ReportDesign implements View {
             ReportSingleton.getInstance().clearReports();
             ReportSingleton.getInstance().addReport(report);
 
-            Broadcaster.broadcast("Update button clicked");
+            Broadcaster.broadcast(((MainUI)getParent()).getPage().getUriFragment());
 
             ReportSingleton.getInstance().clearReports();
-            ReportSingleton.getInstance().addReport(report);
+            ReportSingleton.getInstance().addReport(bugrapRepository.getReportById(report.getId()));
 
             updateButton.setEnabled(false);
             revertButton.setEnabled(false);
 
-            addTimeStampToReportLabel();
+            authorNameLabel.setValue(((MainUI)getParent()).mainAppView.topView.userName.getValue());
+            timeStampLabel.setValue("(" + TimeDifferenceCalculator.calc(report.getTimestamp()) + ")");
         }
     };
     private final Button.ClickListener revert_button_clicked = new Button.ClickListener() {
@@ -133,13 +135,13 @@ public class ReportView extends ReportDesign implements View {
 
             reportDetail.setValue(report.getDescription());
             if (report.getAuthor() != null) {
-                authorNameLabel.setValue(report.getAuthor().getName() + " (" + report.getTimestamp() +")");
+                authorNameLabel.setValue(report.getAuthor().getName());
             }
             else {
                 authorNameLabel.setValue("Anonymous");
             }
 
-            addTimeStampToReportLabel();
+            timeStampLabel.setValue("(" + TimeDifferenceCalculator.calc(report.getTimestamp()) + ")");
 
             reportDetailLayout.addStyleName("report-detail-layout");
             addUpdateAndRevertListeners();
@@ -177,49 +179,6 @@ public class ReportView extends ReportDesign implements View {
 
         //display comments
         displayComments();
-    }
-
-    public void addTimeStampToReportLabel() {
-        if (ReportSingleton.getInstance().getReports().isEmpty()) {
-            return;
-        }
-        authorNameLabel.setValue((authorNameLabel.getValue().split("\\("))[0]);
-
-        report = ReportSingleton.getInstance().getReports().getFirst();
-        report = bugrapRepository.getReportById(report.getId());
-
-        long diff = (new Date()).getTime() - report.getTimestamp().getTime();
-
-        if (diff > 0) {
-            long diffMin = diff / (60 * 1000) % 60;
-            long diffHr = diff / (60 * 60 * 1000) % 60;
-            long diffDay = diff / (24 * 60 * 60 * 1000);
-
-            if (diffDay > 7) {
-                authorNameLabel.setValue(authorNameLabel.getValue() + " (" + report.getTimestamp().toString() + ")");
-            }
-            else if (diffDay <= 7 && diffDay > 1) {
-                authorNameLabel.setValue(authorNameLabel.getValue() + " (" + diffDay + " days ago)");
-            }
-            else if (diffDay == 1) {
-                authorNameLabel.setValue(authorNameLabel.getValue() + " (1 day ago)");
-            }
-            else if (diffHr > 1) {
-                authorNameLabel.setValue(authorNameLabel.getValue() + " (" + diffHr + " hours ago)");
-            }
-            else if (diffHr == 1) {
-                authorNameLabel.setValue(authorNameLabel.getValue() + " (1 hour ago)");
-            }
-            else if (diffMin > 1) {
-                authorNameLabel.setValue(authorNameLabel.getValue() + " (" + diffMin + " minutes ago)");
-            }
-            else if (diffMin == 1) {
-                authorNameLabel.setValue(authorNameLabel.getValue() + " (1 minute ago)");
-            }
-            else {
-                authorNameLabel.setValue(authorNameLabel.getValue() + " (Just now)");
-            }
-        }
     }
 
     private void displayComments() {

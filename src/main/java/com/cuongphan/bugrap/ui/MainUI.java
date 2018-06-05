@@ -37,8 +37,8 @@ public class MainUI extends UI {
 
         mainAppView = new MainAppView();
         Broadcaster.register(mainAppView);
-        navigator.addView( ViewNames.MAINAPPVIEW, mainAppView);
-        navigator.addView( ViewNames.FULLREPORTVIEW, new ReportView());
+        navigator.addView(ViewNames.MAINAPPVIEW, mainAppView);
+        navigator.addView(ViewNames.FULLREPORTVIEW, new ReportView());
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

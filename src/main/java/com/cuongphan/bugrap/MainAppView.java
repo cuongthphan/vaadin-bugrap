@@ -4,6 +4,7 @@ import com.cuongphan.bugrap.customcomponents.PriorityComponent;
 import com.cuongphan.bugrap.utils.Broadcaster;
 import com.cuongphan.bugrap.ui.MainUI;
 import com.cuongphan.bugrap.utils.ReportSingleton;
+import com.cuongphan.bugrap.utils.TimeDifferenceCalculator;
 import com.cuongphan.bugrap.utils.ViewNames;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.provider.Query;
@@ -24,6 +25,7 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -69,6 +71,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         searchBox.setSearchMode(SearchBox.SearchMode.DEBOUNCE);
         searchBox.setDebounceTime(200);
 
+
         topView.searchBoxLayout.addComponent(searchBox);
 
         //set expand ratio for grid columns
@@ -81,6 +84,14 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                         return o1.getPriority().compareTo(o2.getPriority());
                     }
                 });
+        topView.reportGrid.addComponentColumn(report -> new Label(TimeDifferenceCalculator.calc(report.getTimestamp())))
+                .setId("timestamp")
+                .setCaption("LAST MODIFIED")
+        ;
+        topView.reportGrid.addComponentColumn(report -> new Label(TimeDifferenceCalculator.calc(report.getReportedTimestamp())))
+                .setId("reportedTimestamp")
+                .setCaption("REPORTED")
+        ;
         topView.reportGrid.getColumn("version").setExpandRatio(1);
         topView.reportGrid.getColumn("version").setHidden(true);
         topView.reportGrid.getColumn("priority").setExpandRatio(1);
@@ -91,7 +102,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         topView.reportGrid.getColumn("reportedTimestamp").setExpandRatio(1);
         topView.reportGrid.sort("version", SortDirection.DESCENDING);
 
-        topView.reportGrid.setColumnOrder("version", "priority");
+        topView.reportGrid.setColumnOrder(
+                "version", "priority", "type", "summary", "assigned", "timestamp", "reportedTimestamp"
+        );
         //get data
         bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
         bugrapRepository.populateWithTestData();
@@ -272,6 +285,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
         opener.extend(bottomView.openNewButton);
         opener.setWindowName("Report");
+        opener.setUriFragment("" + ReportSingleton.getInstance().getReports().getFirst().getId());
 
         bottomView.openNewButton.addClickListener(event -> {
             for (Report report : topView.reportGrid.getSelectedItems()) {
@@ -283,8 +297,23 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         bottomView.removeUpdateAndRevertListener();
 
         bottomView.updateButton.addClickListener(event -> {
+            bottomView.updateButton.setEnabled(false);
+            bottomView.revertButton.setEnabled(false);
+
+            Reporter author = null;
+            for (Reporter reporter : bugrapRepository.findReporters()) {
+                if (reporter.getName().equals(topView.userName.getValue())) {
+                    author = reporter;
+                    break;
+                }
+            }
+
             for (Report r : topView.reportGrid.getSelectedItems()) {
                 Report report = bugrapRepository.getReportById(r.getId());
+                if (author != null) {
+                    r.setAuthor(author);
+                    report.setAuthor(author);
+                }
                 if (bottomView.priorityNS.getValue() != null) {
                     r.setPriority(bottomView.priorityNS.getValue());
                     report.setPriority(bottomView.priorityNS.getValue());
@@ -316,6 +345,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         });
 
         bottomView.revertButton.addClickListener(event -> {
+            bottomView.updateButton.setEnabled(false);
+            bottomView.revertButton.setEnabled(false);
+
             for (Report r : topView.reportGrid.getSelectedItems()) {
                 Report origin = bugrapRepository.getReportById(r.getId());
                 r.setPriority(origin.getPriority());
@@ -383,7 +415,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                 bottomView.authorNameLabel.setValue("Anonymous");
             }
 
-            bottomView.addTimeStampToReportLabel();
+            bottomView.timeStampLabel.setValue("(" +
+                    TimeDifferenceCalculator.calc(bugrapRepository.getReportById(report.getId()).getTimestamp()) + ")"
+            );
             bottomView.reportDetail.setValue(report.getDescription());
 
             break;
@@ -445,15 +479,28 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         if (!searchBox.getSearchField().getValue().isEmpty()) {
             reportLDP.addFilter(report -> report.getSummary() != null
                     && report.getSummary().toLowerCase().contains(searchBox.getSearchField().getValue().toLowerCase()));
+            String s;
         }
+        reportLDP.addFilter(report -> report.getSummary() != null
+                && report.getSummary().toLowerCase().contains(searchBox.getSearchField().getValue().toLowerCase()));
 
-        topView.reportGrid.setItems(reportLDP.getItems());
+        //topView.reportGrid.setItems(reportLDP.getItems());
+        topView.reportGrid.setDataProvider(reportLDP);
         topView.reportGrid.scrollToStart();
     }
 
     @Override
     public void receiveBroadcast(String message) {
-        Report report = ReportSingleton.getInstance().getReports().getFirst();
+        Report report = bugrapRepository.getReportById(Long.parseLong(message));
+        if (topView.userName.getValue()!= null && !topView.userName.getValue().isEmpty()) {
+            for (Reporter reporter : bugrapRepository.findReporters()) {
+                if (reporter.getName().equals(topView.userName.getValue())) {
+                    report.setAuthor(reporter);
+                    bugrapRepository.save(report);
+                    break;
+                }
+            }
+        }
 
         for (Report r : topView.reportGrid.getSelectedItems()) {
             if (r.getId() == report.getId()) {
