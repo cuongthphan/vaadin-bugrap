@@ -11,6 +11,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.PushStateNavigation;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
@@ -39,6 +40,7 @@ public class MainUI extends UI {
 
         mainAppView = new MainAppView();
         loginView = new LoginView();
+        Broadcaster.register(mainAppView);
 
         navigator.addView(ViewNames.LOGINVIEW, loginView);
         navigator.addView(ViewNames.MAINAPPVIEW, mainAppView);

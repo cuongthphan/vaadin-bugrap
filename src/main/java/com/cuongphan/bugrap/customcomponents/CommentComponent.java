@@ -2,6 +2,7 @@ package com.cuongphan.bugrap.customcomponents;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
@@ -10,6 +11,7 @@ public class CommentComponent extends com.vaadin.ui.CustomComponent {
     public Label authorIconLabel;
     public VerticalLayout commentDetailLayout;
     public Label authorNameLabel;
+    public HorizontalLayout commentWrapper;
     public Label commentDetail;
 
     public CommentComponent() {
@@ -32,9 +34,13 @@ public class CommentComponent extends com.vaadin.ui.CustomComponent {
         authorNameLabel.setValue("Author name here");
         commentDetailLayout.addComponent(authorNameLabel);
 
+        commentWrapper = new HorizontalLayout();
+
         commentDetail = new Label();
         commentDetail.setValue("This is where the comment is");
-        commentDetailLayout.addComponent(commentDetail);
+        commentWrapper.addComponent(commentDetail);
+
+        commentDetailLayout.addComponent(commentWrapper);
 
         setCompositionRoot(commentLayout);
     }

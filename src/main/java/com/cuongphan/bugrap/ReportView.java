@@ -3,6 +3,7 @@ package com.cuongphan.bugrap;
 import com.cuongphan.bugrap.customcomponents.CommentComponent;
 import com.cuongphan.bugrap.utils.Broadcaster;
 import com.cuongphan.bugrap.ui.MainUI;
+import com.cuongphan.bugrap.utils.ReportCopier;
 import com.cuongphan.bugrap.utils.ReportSingleton;
 import com.cuongphan.bugrap.customcomponents.UploadComponent;
 import com.cuongphan.bugrap.utils.TimeDifferenceCalculator;
@@ -10,7 +11,12 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
+import com.vaadin.server.ClassResource;
+import com.vaadin.server.FileResource;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
+import com.vaadin.util.FileTypeResolver;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Comment;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
@@ -27,6 +33,7 @@ import java.util.*;
 public class ReportView extends ReportDesign implements View {
     private BugrapRepository bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
     private Report report;
+    private Report bindedReport;
     private LinkedList<UploadComponent> uploadComponentLinkedList = new LinkedList<>();
     private LinkedList<CommentComponent> commentComponentLinkedList = new LinkedList<>();
 
@@ -35,12 +42,12 @@ public class ReportView extends ReportDesign implements View {
         public void buttonClick(Button.ClickEvent event) {
             report = bugrapRepository.getReportById(report.getId());
 
-            report.setDescription(reportDetail.getValue());
-            report.setAssigned(assignedNS.getValue());
-            report.setType(typeNS.getValue());
-            report.setPriority(priorityNS.getValue());
-            report.setVersion(versionNS.getValue());
-            report.setStatus(statusNS.getValue());
+            report.setDescription(bindedReport.getDescription());
+            report.setAssigned(bindedReport.getAssigned());
+            report.setType(bindedReport.getType());
+            report.setPriority(bindedReport.getPriority());
+            report.setVersion(bindedReport.getVersion());
+            report.setStatus(bindedReport.getStatus());
 
             bugrapRepository.save(report);
 
@@ -54,38 +61,36 @@ public class ReportView extends ReportDesign implements View {
 
             updateButton.setEnabled(false);
             revertButton.setEnabled(false);
+            report = bugrapRepository.getReportById(report.getId());
 
             authorNameLabel.setValue(((MainUI)getParent()).mainAppView.topView.userName.getValue());
             timeStampLabel.setValue("(" + TimeDifferenceCalculator.calc(report.getTimestamp()) + ")");
         }
     };
+
     private final Button.ClickListener revert_button_clicked = new Button.ClickListener() {
         @Override
         public void buttonClick(Button.ClickEvent event) {
-            LinkedList<Report> reportList = ReportSingleton.getInstance().getReports();
-
-            Report r = reportList.getFirst();
-            r = bugrapRepository.getReportById(report.getId());
-
-            priorityNS.setValue(r.getPriority());
-            typeNS.setValue(r.getType());
-            statusNS.setValue(r.getStatus());
-            assignedNS.setValue(r.getAssigned());
-            versionNS.setValue(r.getVersion());
-            reportDetail.setValue(r.getDescription());
+            ReportCopier.copy(bindedReport, report);
+            reportBinder.removeBean();
+            reportBinder.setBean(bindedReport);
             updateButton.setEnabled(false);
             revertButton.setEnabled(false);
         }
     };
+
     private UploadComponent uploadComponent;
+    private Binder<Report> reportBinder = null;
 
     public ReportView() {
         bugrapRepository.populateWithTestData();
+        bindedReport = new Report();
 
         LinkedList<Report> reportList = ReportSingleton.getInstance().getReports();
-
-        if (reportList.size() == 1) {
+        if (reportList.size() != 0) {
             report = reportList.getFirst();
+
+            ReportCopier.copy(bindedReport, report);
 
             if (report.getProject() != null) {
                 projectLabel.setValue(report.getProject().getName());
@@ -104,7 +109,7 @@ public class ReportView extends ReportDesign implements View {
 
             ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(report.getProject()));
             versionNS.setDataProvider(projectVersionLDP);
-            versionNS.setValue(report.getVersion());
+            //versionNS.setValue(report.getVersion());
 
             Set<Report.Priority> prioritySet = new HashSet<>();
             for (Report.Priority priority : Report.Priority.values()) {
@@ -112,7 +117,7 @@ public class ReportView extends ReportDesign implements View {
             }
             ListDataProvider<Report.Priority> priorityLDP = new ListDataProvider<>(prioritySet);
             priorityNS.setDataProvider(priorityLDP);
-            priorityNS.setValue(report.getPriority());
+            //priorityNS.setValue(report.getPriority());
 
             Set<Report.Type> typeSet = new HashSet<>();
             for (Report.Type type : Report.Type.values()) {
@@ -120,7 +125,7 @@ public class ReportView extends ReportDesign implements View {
             }
             ListDataProvider<Report.Type> typeLDP = new ListDataProvider<>(typeSet);
             typeNS.setDataProvider(typeLDP);
-            typeNS.setValue(report.getType());
+            //typeNS.setValue(report.getType());
 
             Set<Report.Status> statusSet = new HashSet<>();
             for (Report.Status status : Report.Status.values()) {
@@ -128,13 +133,13 @@ public class ReportView extends ReportDesign implements View {
             }
             ListDataProvider<Report.Status> statusLDP = new ListDataProvider<>(statusSet);
             statusNS.setDataProvider(statusLDP);
-            statusNS.setValue(report.getStatus());
+            //statusNS.setValue(report.getStatus());
 
             ListDataProvider<Reporter> reporterLDP = new ListDataProvider<>(bugrapRepository.findReporters());
             assignedNS.setDataProvider(reporterLDP);
-            assignedNS.setValue(report.getAssigned());
+            //assignedNS.setValue(report.getAssigned());
 
-            reportDetail.setValue(report.getDescription());
+            //reportDetail.setValue(report.getDescription());
             if (report.getAuthor() != null) {
                 authorNameLabel.setValue(report.getAuthor().getName());
             }
@@ -153,15 +158,18 @@ public class ReportView extends ReportDesign implements View {
                     if (event.isUserOriginated()) {
                         setUpdateAndRevertStatus();
                     }
+                    if (event.getSource().getClass() == TextArea.class) {
+                        ((TextArea)event.getSource()).setRows(10);
+                    }
                 }
             };
 
-            versionNS.addValueChangeListener(reportValueChangeEvent);
-            priorityNS.addValueChangeListener(reportValueChangeEvent);
-            typeNS.addValueChangeListener(reportValueChangeEvent);
-            assignedNS.addValueChangeListener(reportValueChangeEvent);
-            statusNS.addValueChangeListener(reportValueChangeEvent);
-            reportDetail.addValueChangeListener(reportValueChangeEvent);
+            versionNS.addValueChangeListener    (reportValueChangeEvent);
+            priorityNS.addValueChangeListener   (reportValueChangeEvent);
+            typeNS.addValueChangeListener       (reportValueChangeEvent);
+            assignedNS.addValueChangeListener   (reportValueChangeEvent);
+            statusNS.addValueChangeListener     (reportValueChangeEvent);
+            reportDetail.addValueChangeListener (reportValueChangeEvent);
         }
 
         openNewButton.setVisible(false);
@@ -172,15 +180,60 @@ public class ReportView extends ReportDesign implements View {
         addDoneButtonListener();
 
         UploadReceiver uploadReceiver = new UploadReceiver();
-        attachmentButton.setReceiver(uploadReceiver);
-        attachmentButton.addStartedListener(uploadReceiver);
-        attachmentButton.addProgressListener(uploadReceiver);
-        attachmentButton.addFinishedListener(uploadReceiver);
-        attachmentButton.addSucceededListener(uploadReceiver);
 
-        Binder<Report> reportBinder = new Binder<>();
+        attachmentButton.setReceiver            (uploadReceiver);
+        attachmentButton.addStartedListener     (uploadReceiver);
+        attachmentButton.addProgressListener    (uploadReceiver);
+        attachmentButton.addFinishedListener    (uploadReceiver);
+        attachmentButton.addSucceededListener   (uploadReceiver);
 
-        
+        reportBinder = new Binder<>();
+        reportBinder.forField(priorityNS)   .bind(Report::getPriority,      Report::setPriority);
+        reportBinder.forField(typeNS)       .bind(Report::getType,          Report::setType);
+        reportBinder.forField(statusNS)     .bind(Report::getStatus,        Report::setStatus);
+        reportBinder.forField(assignedNS)   .bind(Report::getAssigned,      Report::setAssigned);
+        reportBinder.forField(versionNS)    .bind(Report::getVersion,       Report::setVersion);
+        reportBinder.forField(reportDetail) .bind(Report::getDescription,   Report::setDescription);
+
+        if (reportList.size() == 1) {
+            reportBinder.setBean(bindedReport);
+
+            versionNS.setEmptySelectionAllowed(false);
+            priorityNS.setEmptySelectionAllowed(false);
+            typeNS.setEmptySelectionAllowed(false);
+            openNewButton.setVisible(true);
+            reportDetail.setVisible(true);
+        }
+        else if (reportList.size() > 1) {
+            report = reportList.getFirst();
+
+            openNewButton.setVisible(false);
+            reportDetail.setVisible(false);
+            reportNameLabel.setValue(ReportSingleton.getInstance().getReports().size() +
+                    " reported selected - Select a single report to view contents");
+
+            ReportCopier.copy(bindedReport, report);
+
+            for (Report r : reportList) {
+                if (r.getPriority() != bindedReport.getPriority()) {
+                    bindedReport.setPriority(null);
+                }
+                if (r.getType() != bindedReport.getType()) {
+                    bindedReport.setPriority(null);
+                }
+                if (r.getStatus() != bindedReport.getStatus()) {
+                    bindedReport.setStatus(null);
+                }
+                if (r.getAssigned() != bindedReport.getAssigned()) {
+                    bindedReport.setAssigned(null);
+                }
+                if (r.getVersion() != bindedReport.getVersion()) {
+                    bindedReport.setVersion(null);
+                }
+            }
+            reportBinder.setBean(bindedReport);
+        }
+
         //display comments
         displayComments();
     }
@@ -191,14 +244,49 @@ public class ReportView extends ReportDesign implements View {
         }
         if (!ReportSingleton.getInstance().getReports().isEmpty()) {
             for (Comment comment : bugrapRepository.findComments(ReportSingleton.getInstance().getReports().getFirst())) {
+                CommentComponent component = new CommentComponent();
+                component.authorNameLabel.setValue(comment.getAuthor().getName());
+
+                reportDescriptionLayout.addComponent(component);
                 if (comment.getType() == Comment.Type.COMMENT) {
-                    CommentComponent component = new CommentComponent();
-                    component.authorNameLabel.setValue(comment.getAuthor().getName());
                     component.commentDetail.setValue(comment.getComment());
-                    reportDescriptionLayout.addComponent(component);
-                    commentComponentLinkedList.add(component);
                 }
-                //TODO: display attachments
+                else {
+                    component.commentDetail.setValue(comment.getAttachmentName());
+                    component.commentDetail.addStyleName("link");
+                    component.commentWrapper.addLayoutClickListener(event -> {
+                        Window subWindow = new Window();
+                        subWindow.center();
+
+                        File f = new File(comment.getAttachmentName());
+                        try (FileOutputStream fos = new FileOutputStream(f)) {
+                            fos.write(comment.getAttachment());
+                            fos.flush();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        subWindow.addCloseListener(e -> {
+                            f.delete();
+                        });
+
+                        String extension = FileTypeResolver.getMIMEType(f).split("\\/")[0];
+                        if (extension.equals("image")) {
+                            Image image = new Image(f.getName(), new FileResource(
+                                    new File(f.getAbsolutePath())
+                            ));
+                            image.setWidth("500px");
+
+                            VerticalLayout verticalLayout = new VerticalLayout();
+                            verticalLayout.addComponent(image);
+                            subWindow.setContent(verticalLayout);
+                        }
+
+                        UI.getCurrent().addWindow(subWindow);
+                    });
+                }
+                commentComponentLinkedList.add(component);
             }
         }
     }
@@ -264,24 +352,18 @@ public class ReportView extends ReportDesign implements View {
     }
 
     private void setUpdateAndRevertStatus() {
-        report = ReportSingleton.getInstance().getReports().getFirst();
+        Report temp = bugrapRepository.getReportById(report.getId());
 
-        if (!((priorityNS.getValue() == null && report.getPriority() == null) ||
-                (priorityNS.getValue() != null && priorityNS.getValue().equals(report.getPriority()))) ||
-                !((typeNS.getValue() == null && report.getType() == null) ||
-                (typeNS.getValue() != null && typeNS.getValue().equals(report.getType()))) ||
-                !((statusNS.getValue() == null && report.getStatus() == null) ||
-                (statusNS.getValue() != null && statusNS.getValue().equals(report.getStatus()))) ||
-                !((assignedNS.getValue() == null && report.getAssigned() == null) ||
-                (assignedNS.getValue() != null && assignedNS.getValue().equals(report.getAssigned()))) ||
-                !((versionNS.getValue() == null && report.getVersion() == null) ||
-                (versionNS.getValue() != null && versionNS.getValue().equals(report.getVersion()))) ||
-                !((reportDetail.getValue() == null && report.getDescription() == null) ||
-                (reportDetail.getValue() != null && reportDetail.getValue().equals(report.getDescription())))) {
+        if (priorityNS.getValue() != temp.getPriority() ||
+                typeNS.getValue() != temp.getType() ||
+                statusNS.getValue() != temp.getStatus() ||
+                (assignedNS.getValue() == null && assignedNS.getValue() != temp.getAssigned()) ||
+                (assignedNS.getValue() != null && !assignedNS.getValue().equals(temp.getAssigned())) ||
+                (versionNS.getValue() == null && versionNS.getValue() != temp.getVersion()) ||
+                (versionNS.getValue() !=null && !versionNS.getValue().equals(temp.getVersion()))) {
             updateButton.setEnabled(true);
             revertButton.setEnabled(true);
-        }
-        else {
+        } else {
             updateButton.setEnabled(false);
             revertButton.setEnabled(false);
         }
@@ -346,7 +428,7 @@ public class ReportView extends ReportDesign implements View {
                         Notification.Type.ERROR_MESSAGE);
                 return null;
             }
-            return new ByteArrayOutputStream();
+            return fos;
         }
 
         @Override

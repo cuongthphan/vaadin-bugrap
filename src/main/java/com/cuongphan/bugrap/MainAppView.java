@@ -237,6 +237,11 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         topView.reportGrid.setSelectionMode(Grid.SelectionMode.MULTI);
 
         topView.reportGrid.addSelectionListener(event -> {
+            ReportSingleton.getInstance().clearReports();
+            for (Report report : topView.reportGrid.getSelectedItems()) {
+                ReportSingleton.getInstance().addReport(report);
+            }
+
             if (topView.reportGrid.getSelectedItems().size() != 0) {
                 bottomView = new ReportView();
 
@@ -247,28 +252,10 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
                 //display second view if 1 report is selected
                 if (topView.reportGrid.getSelectedItems().size() == 1) {
-                    bottomView.versionNS.setEmptySelectionAllowed(false);
-                    bottomView.priorityNS.setEmptySelectionAllowed(false);
-                    bottomView.typeNS.setEmptySelectionAllowed(false);
-                    bottomView.openNewButton.setVisible(true);
-                    bottomView.reportDetail.setVisible(true);
-
-                    ReportSingleton.getInstance().clearReports();
-                    for (Report report : topView.reportGrid.getSelectedItems()) {
-                        ReportSingleton.getInstance().addReport(report);
-                    }
-
-                    refreshBottomView();
                     setSplitPosition(60, Unit.PERCENTAGE);
                 }
                 // if more than 1 reported chosen
                 else {
-                    bottomView.openNewButton.setVisible(false);
-                    bottomView.reportDetail.setVisible(false);
-                    bottomView.reportNameLabel.setValue(topView.reportGrid.getSelectedItems().size() +
-                            " reported selected - Select a single report to view contents");
-
-                    refreshBottomView();
                     setSplitPosition(90, Unit.PIXELS, true);
                 }
                 addBottomViewListener();
