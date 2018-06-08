@@ -9,22 +9,26 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.vaadin.bugrap.domain.BugrapRepository;
+import org.vaadin.bugrap.domain.entities.*;
 
-public class LoginIT extends TestBenchTestCase {
+public class BugrapIT extends TestBenchTestCase {
     private static final String URL = "http://localhost";
     private static final String PORT = "8080";
-    private ChromeDriver driver;
+    private static final String BASE_URL = URL + ":" + PORT;
+
     @Before
     public void setUp() {
         System.setProperty("webdriver.chrome.driver", "/Users/cuongphanthanh/webdrivers/chromedriver");
-        setDriver(driver = new ChromeDriver());
-        driver.get(URL + ":" + PORT);
+        setDriver(new ChromeDriver());
+        getDriver().get(URL + ":" + PORT);
     }
 
     @After
     public void tearDown() {
-        driver.quit();
+        getDriver().quit();
     }
 
     @Test
@@ -32,8 +36,8 @@ public class LoginIT extends TestBenchTestCase {
         for (Account account : AccountList.getInstance().getList()) {
             setCredentials(account.getUsername(), account.getPassword());
             clickLogin();
-            Assert.assertTrue(driver.getCurrentUrl().contains(ViewNames.MAINAPPVIEW));
-            driver.get(URL + ":" + PORT);
+            Assert.assertTrue(getDriver().getCurrentUrl().contains(ViewNames.MAINAPPVIEW));
+            getDriver().get(BASE_URL);
         }
     }
 
@@ -41,7 +45,7 @@ public class LoginIT extends TestBenchTestCase {
     public void testFailedLogin() {
         setCredentials("cuong@vaadin.com", "08082208");
         clickLogin();
-        Assert.assertFalse(driver.getCurrentUrl().contains(ViewNames.MAINAPPVIEW));
+        Assert.assertFalse(getDriver().getCurrentUrl().contains(ViewNames.MAINAPPVIEW));
         Assert.assertTrue($(LabelElement.class).first().getText().equals("Wrong email or password"));
     }
 
@@ -59,5 +63,22 @@ public class LoginIT extends TestBenchTestCase {
 
     public void clickLogin() {
         $(ButtonElement.class).caption("Login").first().click();
+    }
+
+    @Test
+    public void testProjectChoosing() {
+        getDriver().get(BASE_URL + "/" + ViewNames.MAINAPPVIEW + "/developer");
+        Assert.assertTrue($(LabelElement.class).id("username-label").getText().equals("developer"));
+
+        ComboBoxElement comboBox = $(ComboBoxElement.class).id("project-combobox");
+        GridElement grid = $(GridElement.class).first();
+        
+        for (String str : comboBox.getPopupSuggestions()) {
+            if (!str.equals("Project 5")) {
+                comboBox.selectByText(str);
+                Assert.assertTrue(grid.getRowCount() > 0);
+            }
+        }
+        getDriver().get(BASE_URL);
     }
 }

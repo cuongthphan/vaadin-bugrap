@@ -26,7 +26,7 @@ import com.vaadin.ui.CssLayout;
 @SuppressWarnings("serial")
 public class MainDesign extends VerticalLayout {
     protected ComboBox<org.vaadin.bugrap.domain.entities.Project> projectComboBox;
-    protected Label userName;
+    protected Label usernameLabel;
     protected CssLayout logoutLayout;
     protected Label logoutLabel;
     protected Label bugLabel;

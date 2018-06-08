@@ -63,7 +63,7 @@ public class ReportView extends ReportDesign implements View {
             revertButton.setEnabled(false);
             report = bugrapRepository.getReportById(report.getId());
 
-            authorNameLabel.setValue(((MainUI)getParent()).mainAppView.topView.userName.getValue());
+            authorNameLabel.setValue(((MainUI)getParent()).mainAppView.topView.usernameLabel.getValue());
             timeStampLabel.setValue("(" + TimeDifferenceCalculator.calc(report.getTimestamp()) + ")");
         }
     };
@@ -294,7 +294,7 @@ public class ReportView extends ReportDesign implements View {
     private void addDoneButtonListener() {
         doneButton.addClickListener(event -> {
             uploadLayout.removeAllComponents();
-            String username = ((MainUI) getUI()).mainAppView.topView.userName.getValue();
+            String username = ((MainUI) getUI()).mainAppView.topView.usernameLabel.getValue();
 
             if (commentTextArea.getValue() != null && !commentTextArea.getValue().isEmpty()) {
                 Comment comment = new Comment();

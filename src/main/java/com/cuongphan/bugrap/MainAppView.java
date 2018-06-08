@@ -292,7 +292,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
             Reporter author = null;
             for (Reporter reporter : bugrapRepository.findReporters()) {
-                if (reporter.getName().equals(topView.userName.getValue())) {
+                if (reporter.getName().equals(topView.usernameLabel.getValue())) {
                     author = reporter;
                     break;
                 }
@@ -455,7 +455,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
         //filter the reports
         if (onlyMeItem.isChecked()) {
-            reportLDP.addFilter(report -> report.getAssigned() != null && report.getAssigned().getName().equals(topView.userName.getValue()));
+            reportLDP.addFilter(report -> report.getAssigned() != null && report.getAssigned().getName().equals(topView.usernameLabel.getValue()));
         }
 
         if (openItem.isChecked()) {
@@ -482,9 +482,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
     @Override
     public void receiveBroadcast(String message) {
         Report report = bugrapRepository.getReportById(Long.parseLong(message));
-        if (topView.userName.getValue()!= null && !topView.userName.getValue().isEmpty()) {
+        if (topView.usernameLabel.getValue()!= null && !topView.usernameLabel.getValue().isEmpty()) {
             for (Reporter reporter : bugrapRepository.findReporters()) {
-                if (reporter.getName().equals(topView.userName.getValue())) {
+                if (reporter.getName().equals(topView.usernameLabel.getValue())) {
                     report.setAuthor(reporter);
                     bugrapRepository.save(report);
                     break;
@@ -528,6 +528,6 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        topView.userName.setValue(event.getParameters());
+        topView.usernameLabel.setValue(event.getParameters());
     }
 }

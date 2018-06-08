@@ -11,11 +11,11 @@
   <vaadin-vertical-layout id="vertical-layout-wrapper" size-full>
    <vaadin-vertical-layout id="mainview-header">
     <vaadin-horizontal-layout width-full>
-     <vaadin-combo-box placeholder="Select a project" width-full data-item-type="org.vaadin.bugrap.domain.entities.Project" _id="projectComboBox" :middle></vaadin-combo-box>
+     <vaadin-combo-box id="project-combobox" placeholder="Select a project" width-full data-item-type="org.vaadin.bugrap.domain.entities.Project" _id="projectComboBox" :middle></vaadin-combo-box>
      <vaadin-horizontal-layout size-full :right>
       <vaadin-horizontal-layout height-full :middle :right>
        <vaadin-css-layout :middle :right>
-        <vaadin-label icon="fonticon://Vaadin-Icons/e80d" plain-text _id="userName">
+        <vaadin-label icon="fonticon://Vaadin-Icons/e80d" id="username-label" plain-text _id="usernameLabel">
           developer 
         </vaadin-label>
        </vaadin-css-layout>
@@ -74,7 +74,7 @@
     </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
    <vaadin-panel id="grid-panel" size-full _id="gridPanel" :expand>
-    <vaadin-grid size-full data-item-type="org.vaadin.bugrap.domain.entities.Report" selection-mode="multi" _id="reportGrid">
+    <vaadin-grid id="report-grid" size-full data-item-type="org.vaadin.bugrap.domain.entities.Report" selection-mode="multi" _id="reportGrid">
      <table>
       <colgroup>
        <col column-id="version" sortable>
