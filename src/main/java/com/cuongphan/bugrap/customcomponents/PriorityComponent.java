@@ -31,6 +31,8 @@ public class PriorityComponent extends CustomComponent {
             case TRIVIAL:
                 priorityInt = 1;
                 break;
+            default:
+                break;
         }
 
         layout = new HorizontalLayout();

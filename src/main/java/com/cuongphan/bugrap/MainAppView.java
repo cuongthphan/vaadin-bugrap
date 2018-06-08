@@ -10,6 +10,7 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.SerializableComparator;
 import com.vaadin.shared.data.sort.SortDirection;
@@ -34,7 +35,6 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
     private BugrapRepository bugrapRepository;
     public MainView topView;
     private Set<String> checkedItems = new HashSet<>();
-    private String focusItemStyle = "focus-item";
     private MenuBar.MenuItem everyoneItem;
     private MenuBar.MenuItem onlyMeItem;
     private MenuBar.MenuItem openSubItem;
@@ -56,6 +56,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
         topView = new MainView();
         bottomView = new ReportView();
+        topView.logoutLayout.addLayoutClickListener(event -> {
+            ((MainUI)UI.getCurrent()).navigator.navigateTo(ViewNames.LOGINVIEW);
+        });
 
         setFirstComponent(topView);
         setSecondComponent(bottomView);
@@ -521,5 +524,10 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
     public void detach() {
         Broadcaster.unregister(this);
         super.detach();
+    }
+
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+        topView.userName.setValue(event.getParameters());
     }
 }

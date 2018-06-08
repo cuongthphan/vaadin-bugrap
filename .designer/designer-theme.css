@@ -14675,3 +14675,11 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 0 20px 0 20px;
 	background: #EDF5E1;
 }
+
+.mytheme .link {
+	text-decoration: underline;
+}
+
+.mytheme .link:hover {
+	font-weight: bold;
+}
