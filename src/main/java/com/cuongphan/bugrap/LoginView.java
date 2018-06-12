@@ -2,6 +2,7 @@ package com.cuongphan.bugrap;
 
 import com.cuongphan.bugrap.ui.MainUI;
 import com.cuongphan.bugrap.utils.Account;
+import com.cuongphan.bugrap.utils.ReportFilter;
 import com.cuongphan.bugrap.utils.ViewNames;
 import com.vaadin.data.*;
 import com.vaadin.data.validator.EmailValidator;
@@ -31,7 +32,7 @@ public class LoginView extends LoginDesign implements View {
         accountBinder.forField(emailTF)
                 .withValidator(new EmailValidator("Invalid email"))
                 .withValidationStatusHandler(statusHandler)
-                .bind(Account::getUsername, Account::setUsername);
+                .bind(Account::getEmail, Account::setEmail);
         accountBinder.forField(passwordField)
                 .bind(Account::getPassword, Account::setPassword);
 
@@ -40,7 +41,7 @@ public class LoginView extends LoginDesign implements View {
                 return;
             }
             for (Reporter reporter : bugrapRepository.findReporters()) {
-                if (reporter.getEmail().equals(account.getUsername())
+                if (reporter.getEmail().equals(account.getEmail())
                         && reporter.getPassword().equals(account.getPassword())) {
                     resetForm();
                     errorLabel.setValue("");

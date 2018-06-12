@@ -99,7 +99,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         topView.reportGrid.getColumn("version").setHidden(true);
         topView.reportGrid.getColumn("priority").setExpandRatio(1);
         topView.reportGrid.getColumn("type").setExpandRatio(1);
-        topView.reportGrid.getColumn("summary").setExpandRatio(8);
+        topView.reportGrid.getColumn("summary").setExpandRatio(7);
         topView.reportGrid.getColumn("assigned").setExpandRatio(1);
         topView.reportGrid.getColumn("timestamp").setExpandRatio(1);
         topView.reportGrid.getColumn("reportedTimestamp").setExpandRatio(1);
@@ -182,21 +182,31 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
         MenuBar.Command statusCommand = new MenuBar.Command() {
             MenuBar.MenuItem previous = null;
+            boolean previousIsCustom = false;
 
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 if (previous != null) {
+                    if (!previous.isChecked()) {
+                        previousIsCustom = false;
+                    }
+                    else {
+                        previousIsCustom = true;
+                    }
                     previous.setChecked(false);
                 }
-                if (!selectedItem.getText().equals("Custom")) {
-                    if (previous == selectedItem) {
+                if (previous == selectedItem) {
+                    if (previousIsCustom) {
+                        selectedItem.setChecked(true);
+                    }
+                    else {
                         selectedItem.setChecked(false);
                         previous = null;
-                    } else {
-                        selectedItem.setCheckable(true);
-                        selectedItem.setChecked(true);
-                        previous = selectedItem;
                     }
+                } else {
+                    selectedItem.setCheckable(true);
+                    selectedItem.setChecked(true);
+                    previous = selectedItem;
                 }
                 refreshGridData();
             }

@@ -1,16 +1,35 @@
 package com.cuongphan.bugrap.utils;
 
 public class Account {
-    private String username;
+    private String email;
     private String password;
+    private String username;
 
     public Account() {
-        username = "";
+        email = "";
         password = "";
+        username = "";
     }
 
-    public Account(String username, String password) {
+    public Account(String email, String password, String username) {
+        this.email = email;
+        this.password = password;
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -20,13 +39,5 @@ public class Account {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

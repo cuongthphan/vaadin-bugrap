@@ -9,13 +9,13 @@
   <vaadin-vertical-layout size-full>
    <vaadin-vertical-layout size-auto :middle :center>
     <vaadin-form-layout id="login-form" size-auto margin>
-     <vaadin-text-field caption="Email" value-change-timeout="1000" placeholder="" width="185px" _id="emailTF"></vaadin-text-field>
-     <vaadin-password-field caption="Password" value-change-timeout="1000" _id="passwordField"></vaadin-password-field>
-     <vaadin-button width="100px" plain-text _id="loginButton">
+     <vaadin-text-field caption="Email" value-change-timeout="1000" id="email-textfield" placeholder="" width="185px" _id="emailTF"></vaadin-text-field>
+     <vaadin-password-field caption="Password" value-change-timeout="1000" id="passwordfield" _id="passwordField"></vaadin-password-field>
+     <vaadin-button id="login-button" width="100px" plain-text _id="loginButton">
        Login 
      </vaadin-button>
     </vaadin-form-layout>
-    <vaadin-label height="27px" plain-text _id="errorLabel" :middle :center></vaadin-label>
+    <vaadin-label id="error-label" height="27px" plain-text _id="errorLabel" :middle :center></vaadin-label>
    </vaadin-vertical-layout>
   </vaadin-vertical-layout>
  </body>
