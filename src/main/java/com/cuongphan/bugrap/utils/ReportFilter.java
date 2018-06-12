@@ -11,22 +11,27 @@ import java.util.Set;
 public class ReportFilter {
     public static Set<Report> findReports(String project, String version, String keyword, String assignee, String[] status) {
         BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
-        Set<Report> result = new HashSet<>();
+        Set<Report> result;
 
-        for (Project prj : Databases.bugrapRepository.findProjects()) {
+        for (Project prj : Database.getInstance().getBugrapRepo().findProjects()) {
             if (prj.getName().equals(project)) {
                 query.project = prj;
-                for (ProjectVersion ver : Databases.bugrapRepository.findProjectVersions(prj)) {
-                    if (ver.getVersion().equals(version)) {
-                        query.projectVersion = ver;
-                        break;
-                    }
+                if (version.equals("All versions")) {
+                    query.projectVersion = null;
                 }
-                break;
+                else {
+                    for (ProjectVersion ver : Database.getInstance().getBugrapRepo().findProjectVersions(prj)) {
+                        if (ver.getVersion().equals(version)) {
+                            query.projectVersion = ver;
+                            break;
+                        }
+                    }
+                    break;
+                }
             }
         }
 
-        result = Databases.bugrapRepository.findReports(query);
+        result = Database.getInstance().getBugrapRepo().findReports(query);
         Set<Report> filteredReport = new HashSet<>();
 
         for (Report r : result) {

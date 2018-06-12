@@ -2,9 +2,7 @@ package com.cuongphan.bugrap;
 
 import com.cuongphan.bugrap.pageobjects.LoginPageObject;
 import com.cuongphan.bugrap.pageobjects.MainPageObject;
-import com.cuongphan.bugrap.utils.Account;
-import com.cuongphan.bugrap.utils.AccountList;
-import com.cuongphan.bugrap.utils.ViewNames;
+import com.cuongphan.bugrap.utils.*;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.elements.ComboBoxElement;
@@ -16,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.vaadin.bugrap.domain.BugrapRepository;
 
 public class BugrapIT extends TestBenchTestCase {
     private static final String URL = "http://localhost";
@@ -122,15 +121,26 @@ public class BugrapIT extends TestBenchTestCase {
         MainPageObject mainPage = new MainPageObject(getDriver());
         mainPage.navigateTo();
 
-        ComboBoxElement comboBox = $(ComboBoxElement.class).id("project-combobox");
-        NativeSelectElement versionNS = $(NativeSelectElement.class).id("version-nv");
+        ComboBoxElement     comboBox    = $(ComboBoxElement.class)      .id("project-combobox");
+        NativeSelectElement versionNS   = $(NativeSelectElement.class)  .id("version-ns");
         GridElement grid = $(GridElement.class).id("report-grid");
 
         //check number of reports of each version of every project
         for (String strPrj : comboBox.getPopupSuggestions()) {
             comboBox.selectByText(strPrj);
+
+            //check that VERSION column is visible
+            Assert.assertEquals(grid.getHeaderCell(0, 1).getText(), "VERSION");
+
             for (TestBenchElement element : versionNS.getOptions()) {
                 versionNS.selectByText(element.getText());
+                if (!element.getText().equals("All versions")) {
+                    if (grid.getHeaderCell(0 , 0) != null) {
+
+                        //check that VERSION column is hidden
+                        Assert.assertNotEquals(grid.getHeaderCell(0, 1).getText(), "VERSION");
+                    }
+                }
                 switch (strPrj + element.getText()) {
                     case "Project 1" + "Version 1":
                         Assert.assertEquals(grid.getRowCount(), 17);
@@ -141,6 +151,9 @@ public class BugrapIT extends TestBenchTestCase {
                     case "Project 1" + "Version 3":
                         Assert.assertEquals(grid.getRowCount(), 0);
                         break;
+                    case "Project 1" + "All versions":
+                        Assert.assertEquals(grid.getRowCount(), 30);
+                        break;
                     case "Project 2" + "Version 1":
                         Assert.assertEquals(grid.getRowCount(), 0);
                         break;
@@ -150,13 +163,37 @@ public class BugrapIT extends TestBenchTestCase {
                     case "Project 2" + "Version 3":
                         Assert.assertEquals(grid.getRowCount(), 1);
                         break;
+                    case "Project 2" + "All versions":
+                        Assert.assertEquals(grid.getRowCount(), 38);
+                        break;
+                    case "Project 3" + "Version 1":
+                        Assert.assertEquals(grid.getRowCount(), 14);
+                        break;
                     case "Project 3" + "Version 2":
                         Assert.assertEquals(grid.getRowCount(), 3);
                         break;
-                    case "Project 4":
+                    case "Project 3" + "Version 3":
+                        Assert.assertEquals(grid.getRowCount(), 1);
+                        break;
+                    case "Project 3" + "All versions":
+                        Assert.assertEquals(grid.getRowCount(), 34);
+                        break;
+                    case "Project 4" + "Version 1":
+                        Assert.assertEquals(grid.getRowCount(), 2);
+                        break;
+                    case "Project 4" + "Version 2":
+                        Assert.assertEquals(grid.getRowCount(), 13);
+                        break;
+                    case "Project 4" + "Version 3":
+                        Assert.assertEquals(grid.getRowCount(), 0);
+                        break;
+                    case "Project 4" + "All versions":
                         Assert.assertEquals(grid.getRowCount(), 38);
                         break;
-                    case "Project 5":
+                    case "Project 5" + "Version 1":
+                    case "Project 5" + "Version 2":
+                    case "Project 5" + "Version 3":
+                    case "Project 5" + "All versions":
                         Assert.assertEquals(grid.getRowCount(), 0);
                         break;
                     default:

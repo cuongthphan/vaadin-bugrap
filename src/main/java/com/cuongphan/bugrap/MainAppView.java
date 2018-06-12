@@ -1,11 +1,8 @@
 package com.cuongphan.bugrap;
 
 import com.cuongphan.bugrap.customcomponents.PriorityComponent;
-import com.cuongphan.bugrap.utils.Broadcaster;
+import com.cuongphan.bugrap.utils.*;
 import com.cuongphan.bugrap.ui.MainUI;
-import com.cuongphan.bugrap.utils.ReportSingleton;
-import com.cuongphan.bugrap.utils.TimeDifferenceCalculator;
-import com.cuongphan.bugrap.utils.ViewNames;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.provider.Query;
 import com.vaadin.icons.VaadinIcons;
@@ -32,7 +29,6 @@ import java.util.LinkedList;
 import java.util.Set;
 
 public class MainAppView extends VerticalSplitPanel implements View, Broadcaster.BroadcastListener {
-    private BugrapRepository bugrapRepository;
     public MainView topView;
     private Set<String> checkedItems = new HashSet<>();
     private MenuBar.MenuItem everyoneItem;
@@ -109,13 +105,11 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                 "version", "priority", "type", "summary", "assigned", "timestamp", "reportedTimestamp"
         );
         //get data
-        bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
-        bugrapRepository.populateWithTestData();
-        topView.projectCountLable.setValue(Integer.toString(bugrapRepository.findProjects().size()));
+        topView.projectCountLable.setValue(Integer.toString(Database.getInstance().getBugrapRepo().findProjects().size()));
         topView.projectCountLable.setId("projectCountLabel");
 
         //add project list data provider to project combo box in ascending order by name
-        ListDataProvider<Project> projectLDP = new ListDataProvider<>(bugrapRepository.findProjects());
+        ListDataProvider<Project> projectLDP = new ListDataProvider<>(Database.getInstance().getBugrapRepo().findProjects());
         projectLDP.setSortOrder(project -> project.getName(), SortDirection.ASCENDING);
         topView.projectComboBox.setDataProvider(projectLDP);
         topView.projectComboBox.setEmptySelectionAllowed(false);
@@ -126,7 +120,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             topView.reportGrid.setItems();
             checkedItems.clear();
 
-            ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(e.getValue()));
+            ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(Database.getInstance().getBugrapRepo().findProjectVersions(e.getValue()));
 
             if (projectVersionLDP.getItems().size() != 1) {
                 topView.versionNS.setDataProvider(projectVersionLDP);
@@ -139,6 +133,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             }
 
             topView.versionNS.setValue(null);
+
             refreshGridData();
         });
 
@@ -154,7 +149,6 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                 topView.reportGrid.select(r);
             }
             previousSelectedItems.clear();
-            String s;
         });
 
         MenuBar.Command assigneeCommand = new MenuBar.Command() {
@@ -301,7 +295,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             bottomView.revertButton.setEnabled(false);
 
             Reporter author = null;
-            for (Reporter reporter : bugrapRepository.findReporters()) {
+            for (Reporter reporter : Database.getInstance().getBugrapRepo().findReporters()) {
                 if (reporter.getName().equals(topView.usernameLabel.getValue())) {
                     author = reporter;
                     break;
@@ -309,7 +303,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             }
 
             for (Report r : topView.reportGrid.getSelectedItems()) {
-                Report report = bugrapRepository.getReportById(r.getId());
+                Report report = Database.getInstance().getBugrapRepo().getReportById(r.getId());
                 if (author != null) {
                     r.setAuthor(author);
                     report.setAuthor(author);
@@ -338,7 +332,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                     r.setDescription(bottomView.reportDetail.getValue());
                     report.setDescription(bottomView.reportDetail.getValue());
                 }
-                bugrapRepository.save(report);
+                Database.getInstance().getBugrapRepo().save(report);
             }
             topView.reportGrid.getDataProvider().refreshAll();
             refreshBottomView();
@@ -349,7 +343,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             bottomView.revertButton.setEnabled(false);
 
             for (Report r : topView.reportGrid.getSelectedItems()) {
-                Report origin = bugrapRepository.getReportById(r.getId());
+                Report origin = Database.getInstance().getBugrapRepo().getReportById(r.getId());
                 r.setPriority(origin.getPriority());
                 r.setType(origin.getType());
                 r.setStatus(origin.getStatus());
@@ -376,7 +370,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                 bottomView.reportNameLabel.setValue(report.getSummary());
             }
 
-            ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(report.getProject()));
+            ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(Database.getInstance().getBugrapRepo().findProjectVersions(report.getProject()));
             bottomView.versionNS.setDataProvider(projectVersionLDP);
             bottomView.versionNS.setValue(report.getVersion());
 
@@ -404,7 +398,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             bottomView.statusNS.setDataProvider(statusLDP);
             bottomView.statusNS.setValue(report.getStatus());
 
-            ListDataProvider<Reporter> reporterLDP = new ListDataProvider<>(bugrapRepository.findReporters());
+            ListDataProvider<Reporter> reporterLDP = new ListDataProvider<>(Database.getInstance().getBugrapRepo().findReporters());
             bottomView.assignedNS.setDataProvider(reporterLDP);
             bottomView.assignedNS.setValue(report.getAssigned());
 
@@ -416,7 +410,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
             }
 
             bottomView.timeStampLabel.setValue("(" +
-                    TimeDifferenceCalculator.calc(bugrapRepository.getReportById(report.getId()).getTimestamp()) + ")"
+                    TimeDifferenceCalculator.calc(Database.getInstance().getBugrapRepo().getReportById(report.getId()).getTimestamp()) + ")"
             );
             bottomView.reportDetail.setValue(report.getDescription());
 
@@ -451,7 +445,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
         query.projectVersion = topView.versionNS.getValue();
 
-        Set<Report> reports = bugrapRepository.findReports(query);
+        Set<Report> reports = Database.getInstance().getBugrapRepo().findReports(query);
         ListDataProvider<Report> reportLDP = new ListDataProvider<>(reports);
 
         if (query.projectVersion == null) {
@@ -491,12 +485,12 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
     @Override
     public void receiveBroadcast(String message) {
-        Report report = bugrapRepository.getReportById(Long.parseLong(message));
+        Report report = Database.getInstance().getBugrapRepo().getReportById(Long.parseLong(message));
         if (topView.usernameLabel.getValue()!= null && !topView.usernameLabel.getValue().isEmpty()) {
-            for (Reporter reporter : bugrapRepository.findReporters()) {
+            for (Reporter reporter : Database.getInstance().getBugrapRepo().findReporters()) {
                 if (reporter.getName().equals(topView.usernameLabel.getValue())) {
                     report.setAuthor(reporter);
-                    bugrapRepository.save(report);
+                    Database.getInstance().getBugrapRepo().save(report);
                     break;
                 }
             }

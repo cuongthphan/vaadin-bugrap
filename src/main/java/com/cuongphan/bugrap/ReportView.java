@@ -1,12 +1,9 @@
 package com.cuongphan.bugrap;
 
 import com.cuongphan.bugrap.customcomponents.CommentComponent;
-import com.cuongphan.bugrap.utils.Broadcaster;
+import com.cuongphan.bugrap.utils.*;
 import com.cuongphan.bugrap.ui.MainUI;
-import com.cuongphan.bugrap.utils.ReportCopier;
-import com.cuongphan.bugrap.utils.ReportSingleton;
 import com.cuongphan.bugrap.customcomponents.UploadComponent;
-import com.cuongphan.bugrap.utils.TimeDifferenceCalculator;
 import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
@@ -17,7 +14,6 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.util.FileTypeResolver;
-import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Comment;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
@@ -31,7 +27,6 @@ import java.util.*;
 
 @SuppressWarnings("deprecation")
 public class ReportView extends ReportDesign implements View {
-    private BugrapRepository bugrapRepository = new BugrapRepository("/Users/cuongphanthanh/bugrap-database");
     private Report report;
     private Report bindedReport;
     private LinkedList<UploadComponent> uploadComponentLinkedList = new LinkedList<>();
@@ -40,7 +35,7 @@ public class ReportView extends ReportDesign implements View {
     private final Button.ClickListener update_button_clicked = new Button.ClickListener() {
         @Override
         public void buttonClick(Button.ClickEvent event) {
-            report = bugrapRepository.getReportById(report.getId());
+            report = Database.getInstance().getBugrapRepo().getReportById(report.getId());
 
             report.setDescription(bindedReport.getDescription());
             report.setAssigned(bindedReport.getAssigned());
@@ -49,7 +44,7 @@ public class ReportView extends ReportDesign implements View {
             report.setVersion(bindedReport.getVersion());
             report.setStatus(bindedReport.getStatus());
 
-            bugrapRepository.save(report);
+            Database.getInstance().getBugrapRepo().save(report);
 
             ReportSingleton.getInstance().clearReports();
             ReportSingleton.getInstance().addReport(report);
@@ -57,11 +52,11 @@ public class ReportView extends ReportDesign implements View {
             Broadcaster.broadcast(((MainUI)getParent()).getPage().getUriFragment());
 
             ReportSingleton.getInstance().clearReports();
-            ReportSingleton.getInstance().addReport(bugrapRepository.getReportById(report.getId()));
+            ReportSingleton.getInstance().addReport(Database.getInstance().getBugrapRepo().getReportById(report.getId()));
 
             updateButton.setEnabled(false);
             revertButton.setEnabled(false);
-            report = bugrapRepository.getReportById(report.getId());
+            report = Database.getInstance().getBugrapRepo().getReportById(report.getId());
 
             authorNameLabel.setValue(((MainUI)getParent()).mainAppView.topView.usernameLabel.getValue());
             timeStampLabel.setValue("(" + TimeDifferenceCalculator.calc(report.getTimestamp()) + ")");
@@ -83,7 +78,7 @@ public class ReportView extends ReportDesign implements View {
     private Binder<Report> reportBinder = null;
 
     public ReportView() {
-        bugrapRepository.populateWithTestData();
+        Database.getInstance().getBugrapRepo().populateWithTestData();
         bindedReport = new Report();
 
         LinkedList<Report> reportList = ReportSingleton.getInstance().getReports();
@@ -107,7 +102,7 @@ public class ReportView extends ReportDesign implements View {
 
             reportNameLabel.setValue(report.getSummary());
 
-            ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(bugrapRepository.findProjectVersions(report.getProject()));
+            ListDataProvider<ProjectVersion> projectVersionLDP = new ListDataProvider<>(Database.getInstance().getBugrapRepo().findProjectVersions(report.getProject()));
             versionNS.setDataProvider(projectVersionLDP);
             //versionNS.setValue(report.getVersion());
 
@@ -135,7 +130,7 @@ public class ReportView extends ReportDesign implements View {
             statusNS.setDataProvider(statusLDP);
             //statusNS.setValue(report.getStatus());
 
-            ListDataProvider<Reporter> reporterLDP = new ListDataProvider<>(bugrapRepository.findReporters());
+            ListDataProvider<Reporter> reporterLDP = new ListDataProvider<>(Database.getInstance().getBugrapRepo().findReporters());
             assignedNS.setDataProvider(reporterLDP);
             //assignedNS.setValue(report.getAssigned());
 
@@ -243,7 +238,7 @@ public class ReportView extends ReportDesign implements View {
             reportDescriptionLayout.removeComponent(reportDescriptionLayout.getComponent(1));
         }
         if (!ReportSingleton.getInstance().getReports().isEmpty()) {
-            for (Comment comment : bugrapRepository.findComments(ReportSingleton.getInstance().getReports().getFirst())) {
+            for (Comment comment : Database.getInstance().getBugrapRepo().findComments(ReportSingleton.getInstance().getReports().getFirst())) {
                 CommentComponent component = new CommentComponent();
                 component.authorNameLabel.setValue(comment.getAuthor().getName());
 
@@ -300,7 +295,7 @@ public class ReportView extends ReportDesign implements View {
                 Comment comment = new Comment();
                 comment.setComment(commentTextArea.getValue());
                 commentTextArea.setValue("");
-                for (Reporter reporter : bugrapRepository.findReporters()) {
+                for (Reporter reporter : Database.getInstance().getBugrapRepo().findReporters()) {
                     if (reporter.getName().equals(username)) {
                         comment.setAuthor(reporter);
                         break;
@@ -309,7 +304,7 @@ public class ReportView extends ReportDesign implements View {
                 comment.setReport(ReportSingleton.getInstance().getReports().getFirst());
                 comment.setTimestamp(new Date());
                 comment.setType(Comment.Type.COMMENT);
-                bugrapRepository.save(comment);
+                Database.getInstance().getBugrapRepo().save(comment);
             }
 
             for (UploadComponent uploadComponent : uploadComponentLinkedList) {
@@ -325,13 +320,13 @@ public class ReportView extends ReportDesign implements View {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                for (Reporter reporter : bugrapRepository.findReporters()) {
+                for (Reporter reporter : Database.getInstance().getBugrapRepo().findReporters()) {
                     if (reporter.getName().equals(username)) {
                         comment.setAuthor(reporter);
                         break;
                     }
                 }
-                bugrapRepository.save(comment);
+                Database.getInstance().getBugrapRepo().save(comment);
                 uploadComponent.file.delete();
             }
 
@@ -352,7 +347,7 @@ public class ReportView extends ReportDesign implements View {
     }
 
     private void setUpdateAndRevertStatus() {
-        Report temp = bugrapRepository.getReportById(report.getId());
+        Report temp = Database.getInstance().getBugrapRepo().getReportById(report.getId());
 
         if (priorityNS.getValue() != temp.getPriority() ||
                 typeNS.getValue() != temp.getType() ||
