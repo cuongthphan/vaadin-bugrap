@@ -4,7 +4,6 @@ import com.cuongphan.bugrap.customcomponents.PriorityComponent;
 import com.cuongphan.bugrap.utils.*;
 import com.cuongphan.bugrap.ui.MainUI;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.data.provider.Query;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -12,9 +11,6 @@ import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.SerializableComparator;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.*;
-import com.vaadin.ui.components.grid.SortOrderProvider;
-import com.vaadin.ui.renderers.ComponentRenderer;
-import com.vaadin.ui.renderers.Renderer;
 import org.vaadin.addons.searchbox.SearchBox;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
@@ -22,11 +18,7 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 public class MainAppView extends VerticalSplitPanel implements View, Broadcaster.BroadcastListener {
     public MainView topView;
@@ -62,8 +54,10 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
 
         //add search box
         searchBox = new SearchBox(VaadinIcons.SEARCH, SearchBox.ButtonPosition.LEFT);
+        searchBox.setId("searchbox");
         searchBox.setButtonJoined(true);
         searchBox.getSearchField().setPlaceholder("Search reports...");
+        searchBox.getSearchField().setId("searchfield");
         searchBox.setSuggestionListSize(5);
         searchBox.setWidth(100, Unit.PERCENTAGE);
         searchBox.addSearchListener(event -> refreshGridData());
@@ -278,7 +272,7 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
         BrowserWindowOpener opener = new BrowserWindowOpener(MainUI.class, ViewNames.FULLREPORTVIEW);
 
         opener.extend(bottomView.openNewButton);
-        opener.setWindowName("Report");
+        opener.setWindowName(topView.usernameLabel.getValue() + "'s report view");
         opener.setUriFragment("" + ReportSingleton.getInstance().getReports().getFirst().getId());
 
         bottomView.openNewButton.addClickListener(event -> {
@@ -334,7 +328,9 @@ public class MainAppView extends VerticalSplitPanel implements View, Broadcaster
                 }
                 Database.getInstance().getBugrapRepo().save(report);
             }
+            topView.reportGrid.getSelectedItems().iterator().next().setTimestamp(new Date());
             topView.reportGrid.getDataProvider().refreshAll();
+
             refreshBottomView();
         });
 

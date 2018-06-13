@@ -8,10 +8,7 @@ import com.vaadin.data.Binder;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
-import com.vaadin.server.ClassResource;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.*;
 import com.vaadin.util.FileTypeResolver;
 import org.vaadin.bugrap.domain.entities.Comment;
@@ -289,7 +286,7 @@ public class ReportView extends ReportDesign implements View {
     private void addDoneButtonListener() {
         doneButton.addClickListener(event -> {
             uploadLayout.removeAllComponents();
-            String username = ((MainUI) getUI()).mainAppView.topView.usernameLabel.getValue();
+            String username = getUI().getPage().getWindowName().split("'")[0];
 
             if (commentTextArea.getValue() != null && !commentTextArea.getValue().isEmpty()) {
                 Comment comment = new Comment();
@@ -355,7 +352,8 @@ public class ReportView extends ReportDesign implements View {
                 (assignedNS.getValue() == null && assignedNS.getValue() != temp.getAssigned()) ||
                 (assignedNS.getValue() != null && !assignedNS.getValue().equals(temp.getAssigned())) ||
                 (versionNS.getValue() == null && versionNS.getValue() != temp.getVersion()) ||
-                (versionNS.getValue() !=null && !versionNS.getValue().equals(temp.getVersion()))) {
+                (versionNS.getValue() !=null && !versionNS.getValue().equals(temp.getVersion())) ||
+                (!reportDetail.getValue().equals(temp.getDescription()))) {
             updateButton.setEnabled(true);
             revertButton.setEnabled(true);
         } else {

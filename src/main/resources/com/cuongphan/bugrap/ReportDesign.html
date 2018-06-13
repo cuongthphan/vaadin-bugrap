@@ -9,19 +9,19 @@
   <vaadin-vertical-layout id="vertical-layout-wrapper" size-full>
    <vaadin-vertical-layout id="breadcrumbs-layout" _id="breadcrumbsLayout" :middle>
     <vaadin-css-layout width-full :middle>
-     <vaadin-label plain-text _id="projectLabel">
+     <vaadin-label id="breadcrumbs-project-label" plain-text _id="projectLabel">
        Project name 
      </vaadin-label>
      <vaadin-label icon="fonticon://Vaadin-Icons/e6ec" plain-text _id="arrowIconLabel"></vaadin-label>
-     <vaadin-label plain-text _id="versionLabel">
+     <vaadin-label id="breadcrumbs-project-version" plain-text _id="versionLabel">
        Version 
      </vaadin-label>
     </vaadin-css-layout>
    </vaadin-vertical-layout>
    <vaadin-vertical-layout id="report-header">
     <vaadin-horizontal-layout>
-     <vaadin-button icon="fonticon://Vaadin-Icons/e7de" id="link-report-button" plain-text _id="openNewButton"></vaadin-button>
-     <vaadin-label plain-text _id="reportNameLabel" :middle>
+     <vaadin-button icon="fonticon://Vaadin-Icons/e7de" id="report-link-button" plain-text _id="openNewButton"></vaadin-button>
+     <vaadin-label id="report-name-label" plain-text _id="reportNameLabel" :middle>
        Report name 
      </vaadin-label>
     </vaadin-horizontal-layout>
@@ -31,10 +31,10 @@
      <vaadin-native-select caption="STATUS" width-full data-item-type="org.vaadin.bugrap.domain.entities.Report.Status" _id="statusNS" :middle :expand="1.2"></vaadin-native-select>
      <vaadin-native-select caption="ASSIGNED TO" width-full data-item-type="org.vaadin.bugrap.domain.entities.Reporter" _id="assignedNS" :middle :expand="1.8"></vaadin-native-select>
      <vaadin-native-select caption="VERSION" width-full data-item-type="org.vaadin.bugrap.domain.entities.ProjectVersion" _id="versionNS" :middle :expand="1.2"></vaadin-native-select>
-     <vaadin-button enabled="false" plain-text _id="updateButton" :bottom :center>
+     <vaadin-button enabled="false" id="update-button" plain-text _id="updateButton" :bottom :center>
        Update 
      </vaadin-button>
-     <vaadin-button enabled="false" plain-text _id="revertButton" :bottom :center>
+     <vaadin-button enabled="false" id="revert-button" plain-text _id="revertButton" :bottom :center>
        Revert 
      </vaadin-button>
     </vaadin-horizontal-layout>
@@ -45,10 +45,10 @@
       <vaadin-label icon="fonticon://Vaadin-Icons/e80d" plain-text _id="reportAuthorLabel"></vaadin-label>
       <vaadin-vertical-layout margin="false" _id="reportDetailLayout" :right :expand>
        <vaadin-horizontal-layout>
-        <vaadin-label plain-text _id="authorNameLabel">
+        <vaadin-label id="report-author-label" plain-text _id="authorNameLabel">
           Author name here 
         </vaadin-label>
-        <vaadin-label plain-text _id="timeStampLabel">
+        <vaadin-label id="report-timestamp-label" plain-text _id="timeStampLabel">
           put time here 
         </vaadin-label>
        </vaadin-horizontal-layout>
@@ -61,17 +61,17 @@
    </vaadin-panel>
    <vaadin-vertical-layout id="attachment-layout" size-full _id="attachmentLayout" :expand>
     <vaadin-horizontal-layout width-full :expand>
-     <vaadin-text-area rows="11" placeholder="Write a new comment..." width-full _id="commentTextArea"></vaadin-text-area>
+     <vaadin-text-area rows="11" id="comment-textarea" placeholder="Write a new comment..." width-full _id="commentTextArea"></vaadin-text-area>
     </vaadin-horizontal-layout>
     <vaadin-vertical-layout id="non-padding-layout">
      <vaadin-panel visible="false">
-      <vaadin-horizontal-layout _id="uploadLayout"></vaadin-horizontal-layout>
+      <vaadin-horizontal-layout id="upload-layout" _id="uploadLayout"></vaadin-horizontal-layout>
      </vaadin-panel>
      <vaadin-horizontal-layout>
       <vaadin-button enabled="false" plain-text _id="doneButton">
         Done 
       </vaadin-button>
-      <vaadin-upload button-caption="Attachment..." _id="attachmentButton"></vaadin-upload>
+      <vaadin-upload button-caption="Attachment..." id="attachment-button" _id="attachmentButton"></vaadin-upload>
       <vaadin-button enabled="false" plain-text _id="cancelButton">
         Cancel 
       </vaadin-button>

@@ -14599,7 +14599,7 @@ div.v-layout.v-horizontal.v-widget {
 	border-bottom: solid 1px #05386B;
 }
 
-.mytheme #link-report-button, .mytheme .attachment-cancel-button {
+.mytheme #report-link-button, .mytheme .attachment-cancel-button {
 	height: auto;
 	width: auto;
 	padding: 0 5px;
