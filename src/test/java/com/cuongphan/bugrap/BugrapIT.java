@@ -4,31 +4,45 @@ import com.cuongphan.bugrap.pageobjects.LoginPageObject;
 import com.cuongphan.bugrap.pageobjects.MainPageObject;
 import com.cuongphan.bugrap.pageobjects.ReportViewObject;
 import com.cuongphan.bugrap.utils.*;
-import com.vaadin.icons.VaadinIcons;
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.ScreenshotOnFailureRule;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.TestBenchTestCase;
+import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elements.*;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import com.vaadin.testbench.screenshot.ImageFileUtil;
+import org.junit.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.vaadin.addons.searchbox.SearchBox;
+
+import java.io.IOException;
+import java.util.Random;
 
 public class BugrapIT extends TestBenchTestCase {
-    private static final String URL = "http://localhost";
-    private static final String PORT = "8080";
-    private static final String BASE_URL = URL + ":" + PORT;
+    @Rule
+    public ScreenshotOnFailureRule screenshotOnFailureRule =
+            new ScreenshotOnFailureRule(this, true);
 
     @Before
     public void setUp() {
         System.setProperty("webdriver.chrome.driver", "/Users/cuongphanthanh/webdrivers/chromedriver");
         setDriver(new ChromeDriver());
+
+        Parameters.setScreenshotErrorDirectory(
+                "screenshots/errors");
+        Parameters.setScreenshotReferenceDirectory(
+                "screenshots/reference");
+        Parameters.setMaxScreenshotRetries(10);
+        Parameters.setScreenshotComparisonTolerance(1);
+        Parameters.setScreenshotRetryDelay(1000);
+        Parameters.setScreenshotComparisonCursorDetection(true);
+        getDriver().manage().window().setSize(new Dimension(1280, 800));
     }
 
     @After
     public void tearDown() {
-        getDriver().quit();
+
     }
 
     @Test
@@ -40,6 +54,12 @@ public class BugrapIT extends TestBenchTestCase {
             loginPage.enterPassword (account.getPassword());
             loginPage.clickLoginButton();
             Assert.assertTrue(getDriver().getCurrentUrl().contains(ViewNames.MAINAPPVIEW));
+
+            try {
+                Assert.assertTrue("Screenshots differ", testBench(getDriver()).compareScreen(ImageFileUtil.getReferenceScreenshotFile("successful_login.png")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -166,10 +186,10 @@ public class BugrapIT extends TestBenchTestCase {
                         Assert.assertEquals(grid.getRowCount(), 38);
                         break;
                     case "Project 3" + "Version 1":
-                        Assert.assertEquals(grid.getRowCount(), 14);
+                        Assert.assertEquals(grid.getRowCount(), 13);
                         break;
                     case "Project 3" + "Version 2":
-                        Assert.assertEquals(grid.getRowCount(), 3);
+                        Assert.assertEquals(grid.getRowCount(), 4);
                         break;
                     case "Project 3" + "Version 3":
                         Assert.assertEquals(grid.getRowCount(), 1);
@@ -200,6 +220,8 @@ public class BugrapIT extends TestBenchTestCase {
                 }
             }
         }
+
+        Assert.assertTrue($(CustomComponentElement.class).id("searchbox").$(ButtonElement.class).first().isEnabled());
     }
 
     @Test
@@ -251,12 +273,10 @@ public class BugrapIT extends TestBenchTestCase {
         mainPageObject.navigateTo();
 
         ComboBoxElement     comboBox    = $(ComboBoxElement.class)      .id("project-combobox");
-        NativeSelectElement versionNS   = $(NativeSelectElement.class)  .id("version-ns");
         GridElement         grid        = $(GridElement.class)          .id("report-grid");
         MenuBarElement      statusMB    = $(MenuBarElement.class)       .id("status-menubar");
 
-        comboBox    .selectByText("Project 4");
-        versionNS   .selectByText("All versions");
+        comboBox.selectByText("Project 4");
 
         statusMB.clickItem("Open");
         Assert.assertEquals(grid.getRowCount(), 1);
@@ -284,7 +304,7 @@ public class BugrapIT extends TestBenchTestCase {
         versionNS   .selectByText("Version 1");
 
         grid.getCell(0, 0).click();
-        Assert.assertTrue($(ButtonElement.class).id("link-report-button") != null);
+        Assert.assertTrue($(ButtonElement.class).id("report-link-button") != null);
 
         grid.getCell(1, 0).click();
         Assert.assertFalse($(ButtonElement.class).caption("").exists());
@@ -315,13 +335,16 @@ public class BugrapIT extends TestBenchTestCase {
         Assert.assertFalse(revertBtn.isEnabled());
         Assert.assertFalse($(LabelElement.class).caption("Project 1").exists());
 
-        reportDetail.setValue("change");
+        reportDetail.setValue(reportDetail.getValue() + "change");
         Assert.assertTrue(updateBtn.isEnabled());
         Assert.assertTrue(revertBtn.isEnabled());
 
         updateBtn.click();
         Assert.assertFalse(updateBtn.isEnabled());
         Assert.assertFalse(revertBtn.isEnabled());
+
+        reportDetail.setValue("change");
+        updateBtn.click();
 
         reportDetail.setValue("more changes");
         revertBtn.click();
@@ -351,7 +374,51 @@ public class BugrapIT extends TestBenchTestCase {
         VerticalLayoutElement attachmentLayout = $(VerticalLayoutElement.class).id("attachment-layout");
         Assert.assertTrue(attachmentLayout.isDisplayed());
 
-        HorizontalLayoutElement uploadLayout = $(HorizontalLayoutElement.class).id("upload-layout");
+        TextAreaElement commentTextarea = $(TextAreaElement.class).id("comment-textarea");
 
+        ButtonElement doneButton        = $(ButtonElement.class).id("done-button");
+        UploadElement attachmentButton  = $(UploadElement.class).id("attachment-button");
+        ButtonElement cancelButton      = $(ButtonElement.class).id("cancel-button");
+
+        Assert.assertFalse  (doneButton         .isEnabled());
+        Assert.assertTrue   (attachmentButton   .isEnabled());
+        Assert.assertFalse  (cancelButton       .isEnabled());
+        int commentCount = $(CustomComponentElement.class).$$(HorizontalLayoutElement.class).all().size();
+
+        Random rand = new Random();
+        commentTextarea.setValue("Random comment no." + rand.nextInt(1000));
+
+        Assert.assertTrue(doneButton    .isEnabled());
+        Assert.assertTrue(cancelButton  .isEnabled());
+
+        findElement(By.className("gwt-FileUpload")).sendKeys("/Users/cuongphanthanh/Desktop/bugrap.pdf");
+        findElement(By.className("gwt-FileUpload")).sendKeys("/Users/cuongphanthanh/Desktop/shiba.jpg");
+
+        HorizontalLayoutElement uploadLayout = $(HorizontalLayoutElement.class).id("upload-layout");
+        Assert.assertEquals(uploadLayout.$(HorizontalLayoutElement.class).all().size(), 2);
+
+        uploadLayout.$(ButtonElement.class).first().click();
+        Assert.assertEquals(uploadLayout.$(HorizontalLayoutElement.class).all().size(), 1);
+
+        doneButton.click();
+        Assert.assertEquals(
+                $(CustomComponentElement.class).$$(HorizontalLayoutElement.class).all().size(),
+                commentCount + 2);
+
+        $(CustomComponentElement.class).$(VerticalLayoutElement.class)
+                .$$(HorizontalLayoutElement.class).$$(LabelElement.class).get(commentCount + 1).click();
+
+        Assert.assertEquals(
+                "500px",
+                $(WindowElement.class).id("sub-window").$(ImageElement.class).first().getCssValue("width")
+        );
+    }
+
+    public void waitFor(int second) {
+        try {
+            Thread.sleep(second*1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

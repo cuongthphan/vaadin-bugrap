@@ -187,9 +187,7 @@ $v-border-radius: 10px;
     padding: 0;
   }
 
-  .report-detail-layout .v-spacing {
-    height: 0;
-  }
+
 
   #report-description-panel {
     border: none;
@@ -202,6 +200,18 @@ $v-border-radius: 10px;
   }
 
   #grid-panel {
+    border-radius: 0;
+    border: none;
+    padding: 0;
+  }
+
+  #comment-panel {
+    border-radius: 0;
+    border: none;
+    padding: 0;
+  }
+
+  .panel-container {
     border-radius: 0;
     border: none;
     padding: 0;

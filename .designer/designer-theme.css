@@ -14643,10 +14643,6 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0;
 }
 
-.mytheme .report-detail-layout .v-spacing {
-	height: 0;
-}
-
 .mytheme #report-description-panel {
 	border: none;
 }
@@ -14658,6 +14654,18 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme #grid-panel {
+	border-radius: 0;
+	border: none;
+	padding: 0;
+}
+
+.mytheme #comment-panel {
+	border-radius: 0;
+	border: none;
+	padding: 0;
+}
+
+.mytheme .panel-container {
 	border-radius: 0;
 	border: none;
 	padding: 0;

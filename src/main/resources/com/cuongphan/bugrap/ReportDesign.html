@@ -39,9 +39,9 @@
      </vaadin-button>
     </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
-   <vaadin-panel id="report-description-panel" size-full _id="reportDescriptionPanel" :expand>
+   <vaadin-panel id="report-description-panel" size-full tabindex="0" _id="reportDescriptionPanel" :expand>
     <vaadin-vertical-layout id="report-description-layout" _id="reportDescriptionLayout">
-     <vaadin-horizontal-layout width-full>
+     <vaadin-horizontal-layout size-full :expand>
       <vaadin-label icon="fonticon://Vaadin-Icons/e80d" plain-text _id="reportAuthorLabel"></vaadin-label>
       <vaadin-vertical-layout margin="false" _id="reportDetailLayout" :right :expand>
        <vaadin-horizontal-layout>
@@ -60,19 +60,21 @@
     </vaadin-vertical-layout>
    </vaadin-panel>
    <vaadin-vertical-layout id="attachment-layout" size-full _id="attachmentLayout" :expand>
-    <vaadin-horizontal-layout width-full :expand>
-     <vaadin-text-area rows="11" id="comment-textarea" placeholder="Write a new comment..." width-full _id="commentTextArea"></vaadin-text-area>
-    </vaadin-horizontal-layout>
+    <vaadin-panel id="comment-panel" size-full :expand>
+     <vaadin-horizontal-layout size-full>
+      <vaadin-text-area rows="0" id="comment-textarea" placeholder="Write a new comment..." size-full _id="commentTextArea"></vaadin-text-area>
+     </vaadin-horizontal-layout>
+    </vaadin-panel>
     <vaadin-vertical-layout id="non-padding-layout">
      <vaadin-panel visible="false">
-      <vaadin-horizontal-layout id="upload-layout" _id="uploadLayout"></vaadin-horizontal-layout>
+      <vaadin-horizontal-layout id="upload-layout" height-full _id="uploadLayout"></vaadin-horizontal-layout>
      </vaadin-panel>
      <vaadin-horizontal-layout>
-      <vaadin-button enabled="false" plain-text _id="doneButton">
+      <vaadin-button enabled="false" id="done-button" plain-text _id="doneButton">
         Done 
       </vaadin-button>
       <vaadin-upload button-caption="Attachment..." id="attachment-button" _id="attachmentButton"></vaadin-upload>
-      <vaadin-button enabled="false" plain-text _id="cancelButton">
+      <vaadin-button enabled="false" id="cancel-button" plain-text _id="cancelButton">
         Cancel 
       </vaadin-button>
      </vaadin-horizontal-layout>

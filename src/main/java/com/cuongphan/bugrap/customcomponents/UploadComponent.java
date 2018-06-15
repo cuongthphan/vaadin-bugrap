@@ -29,4 +29,8 @@ public class UploadComponent extends CustomComponent {
 
         setCompositionRoot(uploadComponentLayout);
     }
+
+    public void removeFile() {
+        file.delete();
+    }
 }

@@ -240,6 +240,7 @@ public class ReportView extends ReportDesign implements View {
                 component.authorNameLabel.setValue(comment.getAuthor().getName());
 
                 reportDescriptionLayout.addComponent(component);
+                reportDescriptionLayout.setExpandRatio(component, 1);
                 if (comment.getType() == Comment.Type.COMMENT) {
                     component.commentDetail.setValue(comment.getComment());
                 }
@@ -249,6 +250,7 @@ public class ReportView extends ReportDesign implements View {
                     component.commentWrapper.addLayoutClickListener(event -> {
                         Window subWindow = new Window();
                         subWindow.center();
+                        subWindow.setId("sub-window");
 
                         File f = new File(comment.getAttachmentName());
                         try (FileOutputStream fos = new FileOutputStream(f)) {
@@ -436,9 +438,9 @@ public class ReportView extends ReportDesign implements View {
 
             uploadComponent.attachmentNameLabel.setValue(event.getFilename());
             uploadComponent.attachmentCancelButton.addClickListener(e -> {
-               uploadComponentLinkedList.remove((UploadComponent) e.getComponent().getParent().getParent());
-               uploadLayout.removeComponent(e.getComponent().getParent().getParent());
-
+                uploadComponentLinkedList.remove((UploadComponent) e.getComponent().getParent().getParent());
+                uploadLayout.removeComponent(e.getComponent().getParent().getParent());
+                ((UploadComponent) e.getComponent().getParent().getParent()).removeFile();
             });
             uploadLayout.addComponent(uploadComponent);
         }
