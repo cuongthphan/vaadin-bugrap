@@ -8,7 +8,6 @@ import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.ScreenshotOnFailureRule;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.TestBenchTestCase;
-import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elements.*;
 import com.vaadin.testbench.screenshot.ImageFileUtil;
 import org.junit.*;

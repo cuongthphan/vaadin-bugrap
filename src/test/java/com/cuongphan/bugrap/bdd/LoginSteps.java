@@ -28,7 +28,6 @@ public class LoginSteps extends TestBenchTestCase {
     @Given("the Login Page")
     public void givenTheLoginPage() {
         loginPageObject.navigateTo();
-        System.out.println(loginPageObject.toString());
     }
 
     @When("I enter email field with $email and password field with $password")
