@@ -3,6 +3,12 @@ bugrap-app
 
 Template for a simple Vaadin application that only requires a Servlet 3.0 container to run.
 
+Credentials:
+1. admin@bugrap.com - d033e22ae348aeb5660fc2140aec35850c4da997
+
+2. manager@bugrap.com - 1a8565a9dc72048ba03b4156be3e569f22771f23
+
+3. developer@bugrap.com - 3dacbce532ccd48f27fa62e993067b3c35f094f7
 
 Workflow
 ========
